@@ -1,0 +1,51 @@
+PODS:
+  - Flutter (1.0.0)
+  - PINCache (3.0.3):
+    - PINCache/Arc-exception-safe (= 3.0.3)
+    - PINCache/Core (= 3.0.3)
+  - PINCache/Arc-exception-safe (3.0.3):
+    - PINCache/Core
+  - PINCache/Core (3.0.3):
+    - PINOperation (~> 1.2.1)
+  - PINOperation (1.2.1)
+  - snapkit (0.0.1):
+    - Flutter
+    - SnapSDK (= 1.6.8)
+  - SnapSDK (1.6.8):
+    - SnapSDK/SCSDKBitmojiKit (= 1.6.8)
+    - SnapSDK/SCSDKCreativeKit (= 1.6.8)
+    - SnapSDK/SCSDKLoginKit (= 1.6.8)
+    - SnapSDK/SCSDKStoryKit (= 1.6.8)
+  - SnapSDK/SCSDKBitmojiKit (1.6.8):
+    - PINCache (< 3.1, >= 2.3)
+    - PINOperation (~> 1.2)
+  - SnapSDK/SCSDKCreativeKit (1.6.8)
+  - SnapSDK/SCSDKLoginKit (1.6.8)
+  - SnapSDK/SCSDKStoryKit (1.6.8)
+
+DEPENDENCIES:
+  - Flutter (from `Flutter`)
+  - snapkit (from `.symlinks/plugins/snapkit/ios`)
+
+SPEC REPOS:
+  trunk:
+    - PINCache
+    - PINOperation
+    - SnapSDK
+
+EXTERNAL SOURCES:
+  Flutter:
+    :path: Flutter
+  snapkit:
+    :path: ".symlinks/plugins/snapkit/ios"
+
+SPEC CHECKSUMS:
+  Flutter: 434fef37c0980e73bb6479ef766c45957d4b510c
+  PINCache: 7a8fc1a691173d21dbddbf86cd515de6efa55086
+  PINOperation: 00c935935f1e8cf0d1e2d6b542e75b88fc3e5e20
+  snapkit: de8fd2a2fadee3a8882d7212e521847e86b20970
+  SnapSDK: 29513fd65172495391394a0999a0388dd136078a
+
+PODFILE CHECKSUM: aafe91acc616949ddb318b77800a7f51bffa2a4c
+
+COCOAPODS: 1.10.1
