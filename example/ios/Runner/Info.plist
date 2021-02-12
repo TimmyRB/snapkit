@@ -41,5 +41,25 @@
 	</array>
 	<key>UIViewControllerBasedStatusBarAppearance</key>
 	<false/>
+	<key>SCSDKClientId</key>
+	<string>218615f5-f147-4d84-9b7b-ff85d92a4873</string>
+	<key>SCSDKRedirectUrl</key>
+	<string>snapkitExample://oauth/snapchat</string>
+	<key>SCSDKScopes</key>
+	<array>
+		<string>https://auth.snapchat.com/oauth2/api/user.bitmoji.avatar</string>
+		<string>https://auth.snapchat.com/oauth2/api/user.display_name</string>
+		<string>https://auth.snapchat.com/oauth2/api/user.external_id</string>
+	</array>
+	<key>LSApplicationQueriesSchemes</key>
+	<array>
+		<string>snapchat</string>
+		<string>bitmoji-sdk</string>
+		<string>itms-apps</string>
+	</array>
+	<key>CFBundleURLSchemes</key>
+	<array>
+		<string>snapkitExample</string>
+	</array>
 </dict>
 </plist>
