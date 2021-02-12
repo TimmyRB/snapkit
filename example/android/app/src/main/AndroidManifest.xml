@@ -3,6 +3,47 @@
    <application
         android:label="snapkit_example"
         android:icon="@mipmap/ic_launcher">
+
+       <meta-data
+           android:name="com.snapchat.kit.sdk.clientId"
+           android:value="218615f5-f147-4d84-9b7b-ff85d92a4873" />
+
+       <meta-data
+           android:name="com.snapchat.kit.sdk.redirectUrl"
+           android:value="snapkitExample://oauth/snapchat" />
+
+       <meta-data
+           android:name="com.snapchat.kit.sdk.scopes"
+           android:resource="@array/snap_connect_scopes" />
+
+       <activity
+           android:name="com.snapchat.kit.sdk.SnapKitActivity"
+           android:launchMode="singleTask">
+
+           <intent-filter>
+               <action android:name="android.intent.action.VIEW" />
+               <category android:name="android.intent.category.DEFAULT" />
+               <category android:name="android.intent.category.BROWSABLE" />
+
+               <!-- Change this to match your redirect URL -->
+               <data
+                   android:scheme="snapkitExample"
+                   android:host="oauth"
+                   android:path="/snapchat" />
+           </intent-filter>
+       </activity>
+
+       <!-- Add this if you want to use the Creative Kit -->
+       <provider
+           android:name="androidx.core.content.FileProvider"
+           android:authorities="${applicationId}.fileprovider"
+           android:exported="false"
+           android:grantUriPermissions="true">
+           <meta-data
+               android:name="android.support.FILE_PROVIDER_PATHS"
+               android:resource="@xml/file_paths" />
+       </provider>
+
         <activity
             android:name=".MainActivity"
             android:launchMode="singleTop"
@@ -38,4 +79,10 @@
             android:name="flutterEmbedding"
             android:value="2" />
     </application>
+
+    <!-- For apps targeting Android 11 (API 30) or Higher, add this -->
+    <queries>
+        <package android:name="com.snapchat.android" />
+    </queries>
+
 </manifest>
