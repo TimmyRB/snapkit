@@ -4,7 +4,7 @@
 #
 Pod::Spec.new do |s|
   s.name             = 'snapkit'
-  s.version          = '0.0.3'
+  s.version          = '1.0.0'
   s.summary          = 'Snapchat\'s SnapKit for Flutter'
   s.description      = <<-DESC
   A Flutter Plugin for integrating with Snapchat\'s SnapKit on iOS & Android
