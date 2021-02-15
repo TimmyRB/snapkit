@@ -10,11 +10,29 @@ class Snapkit {
     return version;
   }
 
+  bool isLoggedIn;
+
+  Snapkit() {
+    this.isLoggedIn = false;
+  }
+
   Future<SnapchatUser> login() async {
     await _channel.invokeMethod('callLogin');
-    List<dynamic> userDetails = await _channel.invokeMethod('getUser');
+    this.isLoggedIn = true;
+    final currentUser = await this.currentUser;
+    return currentUser;
+  }
+
+  Future<SnapchatUser> get currentUser async {
+    assert(isLoggedIn);
+    final List<dynamic> userDetails = await _channel.invokeMethod('getUser');
     return new SnapchatUser(userDetails[0] as String, userDetails[1] as String,
         userDetails[2] as String);
+  }
+
+  Future<bool> get isSnapchatInstalled async {
+    final bool isInstalled = await _channel.invokeMethod('isInstalled');
+    return isInstalled;
   }
 }
 
