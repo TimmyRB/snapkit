@@ -14,9 +14,14 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
+  GlobalKey<ScaffoldMessengerState> _scaffoldMessengerKey =
+      GlobalKey<ScaffoldMessengerState>();
+
   String _platformVersion = 'Unknown';
   SnapchatUser _snapchatUser;
   Snapkit _snapkit = Snapkit();
+
+  bool _isSnackOpen = false;
 
   @override
   void initState() {
@@ -44,10 +49,41 @@ class _MyAppState extends State<MyApp> {
     });
   }
 
+  Future<void> loginUser() async {
+    SnapchatUser user;
+    bool installed;
+
+    try {
+      installed = await _snapkit.isSnapchatInstalled;
+      if (installed)
+        user = await _snapkit.login();
+      else if (!_isSnackOpen) {
+        _isSnackOpen = true;
+        _scaffoldMessengerKey.currentState
+            .showSnackBar(
+                SnackBar(content: Text("Snapchat App not Installed.")))
+            .closed
+            .then((_) {
+          _isSnackOpen = false;
+        });
+      }
+    } on PlatformException catch (exception) {
+      print(exception);
+    }
+
+    if (_snapkit.isLoggedIn) {
+      setState(() {
+        _snapchatUser = user;
+      });
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      home: Scaffold(
+        home: ScaffoldMessenger(
+      key: _scaffoldMessengerKey,
+      child: Scaffold(
           appBar: AppBar(
             title: const Text('Snapkit Example App'),
           ),
@@ -68,18 +104,12 @@ class _MyAppState extends State<MyApp> {
                 if (_snapchatUser != null) Text(_snapchatUser.displayName),
                 Text('Running on: $_platformVersion\n'),
                 ElevatedButton(
-                    onPressed: () {
-                      _snapkit.login().then((user) {
-                        setState(() {
-                          _snapchatUser = user;
-                        });
-                      });
-                    },
+                    onPressed: () => loginUser(),
                     child: Text("Login with Snapchat")),
                 TextButton(onPressed: () {}, child: Text("Logout"))
               ],
             ),
           )),
-    );
+    ));
   }
 }
