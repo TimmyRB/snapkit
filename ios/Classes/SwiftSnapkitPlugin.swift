@@ -25,7 +25,7 @@ public class SwiftSnapkitPlugin: NSObject, FlutterPlugin {
                 }
             }
         case "getUser":
-            let query = "{me{externalId, displayName, bitmoji{avatar}}}"
+            let query = "{me{externalId, displayName, bitmoji{selfie}}}"
             let variables = ["page": "bitmoji"]
             
             SCSDKLoginClient.fetchUserData(withQuery: query, variables: variables, success: { (resources: [AnyHashable: Any]?) in
@@ -37,7 +37,7 @@ public class SwiftSnapkitPlugin: NSObject, FlutterPlugin {
                 let displayName = me["displayName"] as? String
                 var bitmojiAvatarUrl: String?
                 if let bitmoji = me["bitmoji"] as? [String: Any] {
-                    bitmojiAvatarUrl = bitmoji["avatar"] as? String
+                    bitmojiAvatarUrl = bitmoji["selfie"] as? String
                 }
                 
                 result([externalId, displayName, bitmojiAvatarUrl])
@@ -50,6 +50,10 @@ public class SwiftSnapkitPlugin: NSObject, FlutterPlugin {
                     result(FlutterError(code: "iOSGetUserError", message: "Unknown", details: "Unknown"))
                 }
             })
+        case "isInstalled":
+            let appScheme = "snapchat://app"
+            let appUrl = URL(string: appScheme)
+            result(UIApplication.shared.canOpenURL(appUrl! as URL))
         case "getPlatformVersion":
             result("iOS " + UIDevice.current.systemVersion)
         default:
