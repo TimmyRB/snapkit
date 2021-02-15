@@ -60,7 +60,7 @@ public class SnapkitPlugin implements FlutterPlugin, MethodCallHandler, Activity
 
                         MeData meData = userDataResponse.getData().getMe();
                         if (meData == null) {
-                            result.error("AndroidGetUserError", "Returned MeData was null", null);
+                            result.error("GetUserError", "Returned MeData was null", null);
                             return;
                         }
 
@@ -75,9 +75,9 @@ public class SnapkitPlugin implements FlutterPlugin, MethodCallHandler, Activity
                     @Override
                     public void onFailure(boolean isNetworkError, int statusCode) {
                         if (isNetworkError) {
-                            result.error("AndroidGetUserError", "Network Error", statusCode);
+                            result.error("NetworkGetUserError", "Network Error", statusCode);
                         } else {
-                            result.error("AndroidGetUserError", "Unknown Error", statusCode);
+                            result.error("UnknownGetUserError", "Unknown Error", statusCode);
                         }
                     }
                 });
@@ -110,7 +110,7 @@ public class SnapkitPlugin implements FlutterPlugin, MethodCallHandler, Activity
 
     @Override
     public void onLoginFailed() {
-        this._result.error("AndroidLoginError", "Error Logging In", null);
+        this._result.error("LoginError", "Error Logging In", null);
     }
 
     @Override

@@ -27,6 +27,12 @@ class _MyAppState extends State<MyApp> {
   void initState() {
     super.initState();
     initPlatformState();
+
+    _snapkit.onAuthStateChanged.listen((SnapchatUser user) {
+      setState(() {
+        _snapchatUser = user;
+      });
+    });
   }
 
   // Platform messages are asynchronous, so we initialize in an async method.
@@ -50,13 +56,10 @@ class _MyAppState extends State<MyApp> {
   }
 
   Future<void> loginUser() async {
-    SnapchatUser user;
-    bool installed;
-
     try {
-      installed = await _snapkit.isSnapchatInstalled;
+      bool installed = await _snapkit.isSnapchatInstalled;
       if (installed)
-        user = await _snapkit.login();
+        await _snapkit.login();
       else if (!_isSnackOpen) {
         _isSnackOpen = true;
         _scaffoldMessengerKey.currentState
@@ -69,12 +72,6 @@ class _MyAppState extends State<MyApp> {
       }
     } on PlatformException catch (exception) {
       print(exception);
-    }
-
-    if (_snapkit.isLoggedIn) {
-      setState(() {
-        _snapchatUser = user;
-      });
     }
   }
 
@@ -109,17 +106,19 @@ class _MyAppState extends State<MyApp> {
                       height: 50,
                       margin: EdgeInsets.all(15),
                       child: CircleAvatar(
-                        backgroundColor: Colors.grey,
+                        backgroundColor: Colors.lightBlue,
                         foregroundImage: NetworkImage(_snapchatUser.bitmojiUrl),
                       )),
-                if (_snapchatUser != null) Text(_snapchatUser.externalId),
                 if (_snapchatUser != null) Text(_snapchatUser.displayName),
+                if (_snapchatUser != null)
+                  Text(_snapchatUser.externalId,
+                      style: TextStyle(color: Colors.grey, fontSize: 9.0)),
                 Text('Running on: $_platformVersion\n'),
-                if (!_snapkit.isLoggedIn)
+                if (_snapchatUser == null)
                   ElevatedButton(
                       onPressed: () => loginUser(),
                       child: Text("Login with Snapchat")),
-                if (_snapkit.isLoggedIn)
+                if (_snapchatUser != null)
                   TextButton(
                       onPressed: () => logoutUser(), child: Text("Logout"))
               ],

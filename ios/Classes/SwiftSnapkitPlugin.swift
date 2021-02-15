@@ -19,7 +19,7 @@ public class SwiftSnapkitPlugin: NSObject, FlutterPlugin {
         case "callLogin":
             SCSDKLoginClient.login(from: (UIApplication.shared.keyWindow?.rootViewController)!) { (success: Bool, error: Error?) in
                 if (!success) {
-                    result(FlutterError(code: "iOSLoginError", message: error.debugDescription, details: error.debugDescription))
+                    result(FlutterError(code: "LoginError", message: error.debugDescription, details: error.debugDescription))
                 } else {
                     result("Login Success")
                 }
@@ -43,16 +43,24 @@ public class SwiftSnapkitPlugin: NSObject, FlutterPlugin {
                 result([externalId, displayName, bitmojiAvatarUrl])
             }, failure: { (error: Error?, isUserLoggedOut: Bool) in
                 if (isUserLoggedOut) {
-                    result(FlutterError(code: "iOSGetUserError", message: "User Not Logged In", details: isUserLoggedOut))
+                    result(FlutterError(code: "GetUserError", message: "User Not Logged In", details: nil))
                 } else if (error != nil) {
-                    result(FlutterError(code: "iOSGetUserError", message: error.debugDescription, details: error.debugDescription))
+                    result(FlutterError(code: "GetUserError", message: error.debugDescription, details: nil))
                 } else {
-                    result(FlutterError(code: "iOSGetUserError", message: "Unknown", details: "Unknown"))
+                    result(FlutterError(code: "UnknownGetUserError", message: "Unknown", details: nil))
                 }
             })
         case "callLogout":
             SCSDKLoginClient.clearToken()
             result("Logout Success")
+        case "sendMedia":
+            switch (call.arguments) {
+            case .none:
+                result(FlutterError(code: "MediaShareError", message: "Args was null", details: nil))
+            case .some(let args):
+                print(args)
+                result("Success")
+            }
         case "isInstalled":
             let appScheme = "snapchat://app"
             let appUrl = URL(string: appScheme)
