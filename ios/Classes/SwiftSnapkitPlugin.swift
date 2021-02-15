@@ -50,6 +50,9 @@ public class SwiftSnapkitPlugin: NSObject, FlutterPlugin {
                     result(FlutterError(code: "iOSGetUserError", message: "Unknown", details: "Unknown"))
                 }
             })
+        case "callLogout":
+            SCSDKLoginClient.clearToken()
+            result("Logout Success")
         case "isInstalled":
             let appScheme = "snapchat://app"
             let appUrl = URL(string: appScheme)

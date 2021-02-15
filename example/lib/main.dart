@@ -78,6 +78,18 @@ class _MyAppState extends State<MyApp> {
     }
   }
 
+  Future<void> logoutUser() async {
+    try {
+      await _snapkit.logout();
+    } on PlatformException catch (exception) {
+      print(exception);
+    }
+
+    setState(() {
+      _snapchatUser = null;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -103,10 +115,13 @@ class _MyAppState extends State<MyApp> {
                 if (_snapchatUser != null) Text(_snapchatUser.externalId),
                 if (_snapchatUser != null) Text(_snapchatUser.displayName),
                 Text('Running on: $_platformVersion\n'),
-                ElevatedButton(
-                    onPressed: () => loginUser(),
-                    child: Text("Login with Snapchat")),
-                TextButton(onPressed: () {}, child: Text("Logout"))
+                if (!_snapkit.isLoggedIn)
+                  ElevatedButton(
+                      onPressed: () => loginUser(),
+                      child: Text("Login with Snapchat")),
+                if (_snapkit.isLoggedIn)
+                  TextButton(
+                      onPressed: () => logoutUser(), child: Text("Logout"))
               ],
             ),
           )),

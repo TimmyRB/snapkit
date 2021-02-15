@@ -82,8 +82,13 @@ public class SnapkitPlugin implements FlutterPlugin, MethodCallHandler, Activity
                     }
                 });
                 break;
+            case "callLogout":
+                SnapLogin.getAuthTokenManager(_activity).clearToken();
+                this._result = result;
+                break;
             case "isInstalled":
                 result.success(SnapUtils.isSnapchatInstalled(_activity.getPackageManager(), "com.snapchat.android"));
+                break;
             case "getPlatformVersion":
                 result.success("Android " + android.os.Build.VERSION.RELEASE);
                 break;

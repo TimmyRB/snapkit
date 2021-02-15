@@ -23,6 +23,11 @@ class Snapkit {
     return currentUser;
   }
 
+  Future<void> logout() async {
+    await _channel.invokeMethod('callLogout');
+    this.isLoggedIn = false;
+  }
+
   Future<SnapchatUser> get currentUser async {
     assert(isLoggedIn);
     final List<dynamic> userDetails = await _channel.invokeMethod('getUser');
