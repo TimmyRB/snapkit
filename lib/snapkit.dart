@@ -70,6 +70,11 @@ class Snapkit {
     }
   }
 
+  /// Share shares Media to be sent in the Snapchat app. A Type & Url supplied
+  /// through `mediaType` and `mediaUrl` will be the background, with the
+  /// `Sticker` being a User adjustable image, the `Caption` being User editable
+  /// text, and the `AttachmentUrl` will be an attached link User's can access
+  /// by swiping upwards when they view the Snap
   Future<void> share(SnapchatMediaType mediaType,
       {String mediaUrl,
       SnapchatSticker sticker,
@@ -111,47 +116,17 @@ class SnapchatUser {
 }
 
 class SnapchatSticker {
-  /// Width of the Sticker Image, must be above 0.0
-  double width;
-
-  /// Height of the Sticker Image, must be above 0.0
-  double height;
-
-  /// Position of the Sticker from the left as percentage, must be between 0.0 and 100.0
-  double positionX;
-
-  /// Position of the Stick from the top as percentage, must be between 0.0 and 100.0
-  double positionY;
-
-  /// Rotation of the Sticker clockwise, must be between 0.0 and 360.0
-  double rotation;
-
   /// Url to the Image to be used as a Sticker
   String imageUrl;
 
   /// Whether or not the Sticker Image is animated
   bool isAnimated;
 
-  SnapchatSticker(this.imageUrl, this.isAnimated,
-      {this.width, this.height, this.positionX, this.positionY, this.rotation})
-      : assert(
-            imageUrl != null && isAnimated != null,
-            width > 0 &&
-                height > 0 &&
-                positionX >= 0 &&
-                positionX <= 100 &&
-                positionY >= 0 &&
-                positionY <= 100 &&
-                rotation >= 0 &&
-                rotation <= 360);
+  SnapchatSticker(this.imageUrl, this.isAnimated)
+      : assert(imageUrl != null && isAnimated != null);
 
   Map<String, dynamic> toMap() {
     return <String, dynamic>{
-      "width": this.width,
-      "height": this.height,
-      "x": this.positionX,
-      "y": this.positionY,
-      "rotation": this.rotation,
       "imageUrl": this.imageUrl,
       "animated": this.isAnimated
     };
