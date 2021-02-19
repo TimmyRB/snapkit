@@ -75,7 +75,8 @@ class Snapkit {
       SnapchatSticker sticker,
       String caption,
       String attachmentUrl}) async {
-    assert(mediaType != null && caption.length <= 250);
+    assert(
+        mediaType != null && (caption != null ? caption.length <= 250 : true));
     if (mediaType != SnapchatMediaType.NONE) assert(mediaUrl != null);
     await _channel.invokeMethod('sendMedia', <String, dynamic>{
       'mediaType':

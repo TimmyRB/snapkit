@@ -133,7 +133,7 @@ class _MyAppState extends State<MyApp> implements SnapchatAuthStateListener {
                 // sticker: SnapchatSticker(
                 //     "https://cdn.iconscout.com/icon/free/png-512/flutter-2038877-1720090.png",
                 //     false),
-                caption: "Snapkit Example Caption!",
+                // caption: "Snapkit Example Caption!",
                 attachmentUrl: "https://JacobBrasil.com/");
           },
           child: Icon(Icons.camera),
