@@ -8,11 +8,14 @@ import SCSDKCreativeKit
 import SCSDKBitmojiKit
 
 public class SwiftSnapkitPlugin: NSObject, FlutterPlugin {
+    
     public static func register(with registrar: FlutterPluginRegistrar) {
         let channel = FlutterMethodChannel(name: "snapkit", binaryMessenger: registrar.messenger())
         let instance = SwiftSnapkitPlugin()
         registrar.addMethodCallDelegate(instance, channel: channel)
     }
+    
+    var _snapApi: SCSDKSnapAPI?
     
     public func handle(_ call: FlutterMethodCall, result: @escaping FlutterResult) {
         switch call.method {
@@ -54,13 +57,54 @@ public class SwiftSnapkitPlugin: NSObject, FlutterPlugin {
             SCSDKLoginClient.clearToken()
             result("Logout Success")
         case "sendMedia":
-            switch (call.arguments) {
-            case .none:
-                result(FlutterError(code: "MediaShareError", message: "Args was null", details: nil))
-            case .some(let args):
-                print(args)
-                result("Success")
+            guard let arguments = call.arguments,
+                  let args = arguments as? [String: Any] else { return }
+            
+            let mediaType = args["mediaType"] as? String
+            let mediaUrl = args["mediaUrl"] as? String
+            
+            var content: SCSDKSnapContent?
+            
+            switch (mediaType) {
+            case "PHOTO":
+                let photo = SCSDKSnapPhoto(imageUrl: URL(string: mediaUrl!)!)
+                content = SCSDKPhotoSnapContent(snapPhoto: photo)
+            case "VIDEO":
+                let video = SCSDKSnapVideo(videoUrl: URL(string: mediaUrl!)!)
+                content = SCSDKVideoSnapContent(snapVideo: video)
+            case "NONE":
+                content = SCSDKNoSnapContent()
+            default:
+                result(FlutterError(code: "SendMediaArgsError", message: "Invalid Media Type", details: mediaType))
+                return
             }
+            
+            let caption = args["caption"] as? String
+            let attachmentUrl = args["attachmentUrl"] as? String
+            
+            content?.caption = caption
+            content?.attachmentUrl = attachmentUrl
+            
+            if let sticker = args["sticker"] as? [String: Any] {
+                let url = sticker["imageUrl"] as? String
+                let isAnimated = sticker["animated"] as? Bool
+                
+                let snapSticker = SCSDKSnapSticker(stickerUrl: URL(string: url!)!, isAnimated: isAnimated!)
+                
+                content?.sticker = snapSticker
+            }
+            
+            if (self._snapApi == nil) {
+                self._snapApi = SCSDKSnapAPI()
+            }
+            
+            self._snapApi?.startSending(content!, completionHandler: { (error: Error?) in
+                if (error != nil) {
+                    result(FlutterError(code: "SendMediaSendError", message: error.debugDescription, details: nil))
+                } else {
+                    result("SendMedia Success")
+                }
+            })
         case "isInstalled":
             let appScheme = "snapchat://app"
             let appUrl = URL(string: appScheme)

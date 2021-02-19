@@ -13,7 +13,7 @@ class MyApp extends StatefulWidget {
   _MyAppState createState() => _MyAppState();
 }
 
-class _MyAppState extends State<MyApp> {
+class _MyAppState extends State<MyApp> implements SnapchatAuthStateListener {
   GlobalKey<ScaffoldMessengerState> _scaffoldMessengerKey =
       GlobalKey<ScaffoldMessengerState>();
 
@@ -28,11 +28,13 @@ class _MyAppState extends State<MyApp> {
     super.initState();
     initPlatformState();
 
-    _snapkit.onAuthStateChanged.listen((SnapchatUser user) {
-      setState(() {
-        _snapchatUser = user;
-      });
-    });
+    _snapkit.addAuthStateListener(this);
+
+    // _snapkit.onAuthStateChanged.listen((SnapchatUser user) {
+    //   setState(() {
+    //     _snapchatUser = user;
+    //   });
+    // });
   }
 
   // Platform messages are asynchronous, so we initialize in an async method.
@@ -93,37 +95,64 @@ class _MyAppState extends State<MyApp> {
         home: ScaffoldMessenger(
       key: _scaffoldMessengerKey,
       child: Scaffold(
-          appBar: AppBar(
-            title: const Text('Snapkit Example App'),
+        appBar: AppBar(
+          title: const Text('Snapkit Example App'),
+        ),
+        body: Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              if (_snapchatUser != null)
+                Container(
+                    width: 50,
+                    height: 50,
+                    margin: EdgeInsets.all(15),
+                    child: CircleAvatar(
+                      backgroundColor: Colors.lightBlue,
+                      foregroundImage: NetworkImage(_snapchatUser.bitmojiUrl),
+                    )),
+              if (_snapchatUser != null) Text(_snapchatUser.displayName),
+              if (_snapchatUser != null)
+                Text(_snapchatUser.externalId,
+                    style: TextStyle(color: Colors.grey, fontSize: 9.0)),
+              Text('Running on: $_platformVersion\n'),
+              if (_snapchatUser == null)
+                ElevatedButton(
+                    onPressed: () => loginUser(),
+                    child: Text("Login with Snapchat")),
+              if (_snapchatUser != null)
+                TextButton(onPressed: () => logoutUser(), child: Text("Logout"))
+            ],
           ),
-          body: Center(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                if (_snapchatUser != null)
-                  Container(
-                      width: 50,
-                      height: 50,
-                      margin: EdgeInsets.all(15),
-                      child: CircleAvatar(
-                        backgroundColor: Colors.lightBlue,
-                        foregroundImage: NetworkImage(_snapchatUser.bitmojiUrl),
-                      )),
-                if (_snapchatUser != null) Text(_snapchatUser.displayName),
-                if (_snapchatUser != null)
-                  Text(_snapchatUser.externalId,
-                      style: TextStyle(color: Colors.grey, fontSize: 9.0)),
-                Text('Running on: $_platformVersion\n'),
-                if (_snapchatUser == null)
-                  ElevatedButton(
-                      onPressed: () => loginUser(),
-                      child: Text("Login with Snapchat")),
-                if (_snapchatUser != null)
-                  TextButton(
-                      onPressed: () => logoutUser(), child: Text("Logout"))
-              ],
-            ),
-          )),
+        ),
+        floatingActionButton: FloatingActionButton(
+          onPressed: () {
+            _snapkit.share(SnapchatMediaType.PHOTO,
+                mediaUrl:
+                    "https://cdn.iconscout.com/icon/free/png-512/flutter-2038877-1720090.png",
+                // sticker: SnapchatSticker(
+                //     "https://cdn.iconscout.com/icon/free/png-512/flutter-2038877-1720090.png",
+                //     false),
+                caption: "Snapkit Example Caption!",
+                attachmentUrl: "https://JacobBrasil.com/");
+          },
+          child: Icon(Icons.camera),
+        ),
+      ),
     ));
+  }
+
+  @override
+  void onLogin(SnapchatUser user) {
+    setState(() {
+      _snapchatUser = user;
+    });
+  }
+
+  @override
+  void onLogout() {
+    setState(() {
+      _snapchatUser = null;
+    });
   }
 }

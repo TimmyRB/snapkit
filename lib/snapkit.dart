@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
 class Snapkit {
@@ -13,17 +14,24 @@ class Snapkit {
   StreamController<SnapchatUser> _authStatusController;
   Stream<SnapchatUser> onAuthStateChanged;
 
+  SnapchatAuthStateListener authStateListener;
+
   Snapkit() {
     this._authStatusController = StreamController<SnapchatUser>();
     this.onAuthStateChanged = _authStatusController.stream;
     this._authStatusController.add(null);
 
-    this
-        .currentUser
-        .then((user) => this._authStatusController.add(user))
-        .catchError((error, StackTrace stacktrace) {
+    this.currentUser.then((user) {
+      this._authStatusController.add(user);
+      this.authStateListener.onLogin(user);
+    }).catchError((error, StackTrace stacktrace) {
       this._authStatusController.add(null);
+      this.authStateListener.onLogout();
     });
+  }
+
+  void addAuthStateListener(SnapchatAuthStateListener authStateListener) {
+    this.authStateListener = authStateListener;
   }
 
   /// login opens Snapchat's OAuth screen in-app or through a browser if
@@ -33,6 +41,7 @@ class Snapkit {
     await _channel.invokeMethod('callLogin');
     final currentUser = await this.currentUser;
     this._authStatusController.add(currentUser);
+    this.authStateListener.onLogin(currentUser);
     return currentUser;
   }
 
@@ -42,6 +51,7 @@ class Snapkit {
   Future<void> logout() async {
     await _channel.invokeMethod('callLogout');
     this._authStatusController.add(null);
+    this.authStateListener.onLogout();
     this._authStatusController.close();
   }
 
@@ -58,6 +68,23 @@ class Snapkit {
       else
         throw e;
     }
+  }
+
+  Future<void> share(SnapchatMediaType mediaType,
+      {String mediaUrl,
+      SnapchatSticker sticker,
+      String caption,
+      String attachmentUrl}) async {
+    assert(mediaType != null && caption.length <= 250);
+    if (mediaType != SnapchatMediaType.NONE) assert(mediaUrl != null);
+    await _channel.invokeMethod('sendMedia', <String, dynamic>{
+      'mediaType':
+          mediaType.toString().substring(mediaType.toString().indexOf('.') + 1),
+      'mediaUrl': mediaUrl,
+      'sticker': sticker != null ? sticker.toMap() : null,
+      'caption': caption,
+      'attachmentUrl': attachmentUrl
+    });
   }
 
   /// isSnapchatInstalled returns a `bool` of whether or not the Snapchat app
@@ -80,4 +107,68 @@ class SnapchatUser {
   final String bitmojiUrl;
 
   SnapchatUser(this.externalId, this.displayName, this.bitmojiUrl);
+}
+
+class SnapchatSticker {
+  /// Width of the Sticker Image, must be above 0.0
+  double width;
+
+  /// Height of the Sticker Image, must be above 0.0
+  double height;
+
+  /// Position of the Sticker from the left as percentage, must be between 0.0 and 100.0
+  double positionX;
+
+  /// Position of the Stick from the top as percentage, must be between 0.0 and 100.0
+  double positionY;
+
+  /// Rotation of the Sticker clockwise, must be between 0.0 and 360.0
+  double rotation;
+
+  /// Url to the Image to be used as a Sticker
+  String imageUrl;
+
+  /// Whether or not the Sticker Image is animated
+  bool isAnimated;
+
+  SnapchatSticker(this.imageUrl, this.isAnimated,
+      {this.width, this.height, this.positionX, this.positionY, this.rotation})
+      : assert(
+            imageUrl != null && isAnimated != null,
+            width > 0 &&
+                height > 0 &&
+                positionX >= 0 &&
+                positionX <= 100 &&
+                positionY >= 0 &&
+                positionY <= 100 &&
+                rotation >= 0 &&
+                rotation <= 360);
+
+  Map<String, dynamic> toMap() {
+    return <String, dynamic>{
+      "width": this.width,
+      "height": this.height,
+      "x": this.positionX,
+      "y": this.positionY,
+      "rotation": this.rotation,
+      "imageUrl": this.imageUrl,
+      "animated": this.isAnimated
+    };
+  }
+}
+
+abstract class SnapchatAuthStateListener {
+  void onLogin(SnapchatUser user);
+  void onLogout();
+}
+
+enum SnapchatMediaType {
+  /// Share a Photo
+  PHOTO,
+
+  /// Share a Video
+  VIDEO,
+
+  /// Let the User take their own Photo or Video
+  NONE
 }
