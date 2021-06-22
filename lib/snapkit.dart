@@ -1,6 +1,5 @@
 import 'dart:async';
 
-import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
 class Snapkit {
@@ -11,27 +10,27 @@ class Snapkit {
     return version;
   }
 
-  StreamController<SnapchatUser> _authStatusController;
-  Stream<SnapchatUser> onAuthStateChanged;
+  late StreamController<SnapchatUser?> _authStatusController;
+  late Stream<SnapchatUser?> onAuthStateChanged;
 
-  SnapchatAuthStateListener authStateListener;
+  late SnapchatAuthStateListener _authStateListener;
 
   Snapkit() {
-    this._authStatusController = StreamController<SnapchatUser>();
+    this._authStatusController = StreamController<SnapchatUser?>();
     this.onAuthStateChanged = _authStatusController.stream;
     this._authStatusController.add(null);
 
     this.currentUser.then((user) {
       this._authStatusController.add(user);
-      this.authStateListener.onLogin(user);
+      this._authStateListener.onLogin(user);
     }).catchError((error, StackTrace stacktrace) {
       this._authStatusController.add(null);
-      this.authStateListener.onLogout();
+      this._authStateListener.onLogout();
     });
   }
 
   void addAuthStateListener(SnapchatAuthStateListener authStateListener) {
-    this.authStateListener = authStateListener;
+    this._authStateListener = authStateListener;
   }
 
   /// login opens Snapchat's OAuth screen in-app or through a browser if
@@ -41,7 +40,7 @@ class Snapkit {
     await _channel.invokeMethod('callLogin');
     final currentUser = await this.currentUser;
     this._authStatusController.add(currentUser);
-    this.authStateListener.onLogin(currentUser);
+    this._authStateListener.onLogin(currentUser);
     return currentUser;
   }
 
@@ -51,7 +50,7 @@ class Snapkit {
   Future<void> logout() async {
     await _channel.invokeMethod('callLogout');
     this._authStatusController.add(null);
-    this.authStateListener.onLogout();
+    this._authStateListener.onLogout();
     this._authStatusController.close();
   }
 
@@ -59,14 +58,12 @@ class Snapkit {
   /// This will result in an error if the user was not previously logged in.
   Future<SnapchatUser> get currentUser async {
     try {
-      final List<dynamic> userDetails = await _channel.invokeMethod('getUser');
+      final List<dynamic> userDetails =
+          await (_channel.invokeMethod('getUser') as FutureOr<List<dynamic>>);
       return new SnapchatUser(userDetails[0] as String,
           userDetails[1] as String, userDetails[2] as String);
     } on PlatformException catch (e) {
-      if (e.code == "GetUserError" || e.code == "NetworkGetUserError")
-        return null;
-      else
-        throw e;
+      throw e;
     }
   }
 
@@ -76,12 +73,11 @@ class Snapkit {
   /// text, and the `AttachmentUrl` will be an attached link User's can access
   /// by swiping upwards when they view the Snap
   Future<void> share(SnapchatMediaType mediaType,
-      {String mediaUrl,
-      SnapchatSticker sticker,
-      String caption,
-      String attachmentUrl}) async {
-    assert(
-        mediaType != null && (caption != null ? caption.length <= 250 : true));
+      {String? mediaUrl,
+      SnapchatSticker? sticker,
+      String? caption,
+      String? attachmentUrl}) async {
+    assert(caption != null ? caption.length <= 250 : true);
     if (mediaType != SnapchatMediaType.NONE) assert(mediaUrl != null);
     await _channel.invokeMethod('sendMedia', <String, dynamic>{
       'mediaType':
@@ -122,8 +118,7 @@ class SnapchatSticker {
   /// Whether or not the Sticker Image is animated
   bool isAnimated;
 
-  SnapchatSticker(this.imageUrl, this.isAnimated)
-      : assert(imageUrl != null && isAnimated != null);
+  SnapchatSticker(this.imageUrl, this.isAnimated);
 
   Map<String, dynamic> toMap() {
     return <String, dynamic>{
@@ -134,7 +129,7 @@ class SnapchatSticker {
 }
 
 abstract class SnapchatAuthStateListener {
-  void onLogin(SnapchatUser user);
+  void onLogin(SnapchatUser? user);
   void onLogout();
 }
 
