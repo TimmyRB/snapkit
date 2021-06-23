@@ -9,15 +9,10 @@
 /* Begin PBXBuildFile section */
 		1498D2341E8E89220040F4C2 /* GeneratedPluginRegistrant.m in Sources */ = {isa = PBXBuildFile; fileRef = 1498D2331E8E89220040F4C2 /* GeneratedPluginRegistrant.m */; };
 		249B1EC225DA7A3C00CF510C /* SCSDKBitmojiKit.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = 249B1EBD25DA7A3C00CF510C /* SCSDKBitmojiKit.xcframework */; };
-		249B1EC325DA7A3C00CF510C /* SCSDKBitmojiKit.xcframework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 249B1EBD25DA7A3C00CF510C /* SCSDKBitmojiKit.xcframework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		249B1EC425DA7A3C00CF510C /* SCSDKCoreKit.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = 249B1EBE25DA7A3C00CF510C /* SCSDKCoreKit.xcframework */; };
-		249B1EC525DA7A3C00CF510C /* SCSDKCoreKit.xcframework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 249B1EBE25DA7A3C00CF510C /* SCSDKCoreKit.xcframework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		249B1EC625DA7A3C00CF510C /* SCSDKCreativeKit.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = 249B1EBF25DA7A3C00CF510C /* SCSDKCreativeKit.xcframework */; };
-		249B1EC725DA7A3C00CF510C /* SCSDKCreativeKit.xcframework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 249B1EBF25DA7A3C00CF510C /* SCSDKCreativeKit.xcframework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		249B1EC825DA7A3C00CF510C /* SCSDKLoginKit.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = 249B1EC025DA7A3C00CF510C /* SCSDKLoginKit.xcframework */; };
-		249B1EC925DA7A3C00CF510C /* SCSDKLoginKit.xcframework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 249B1EC025DA7A3C00CF510C /* SCSDKLoginKit.xcframework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		249B1ECA25DA7A3C00CF510C /* SCSDKStoryKit.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = 249B1EC125DA7A3C00CF510C /* SCSDKStoryKit.xcframework */; };
-		249B1ECB25DA7A3C00CF510C /* SCSDKStoryKit.xcframework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 249B1EC125DA7A3C00CF510C /* SCSDKStoryKit.xcframework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		3B3967161E833CAA004F5970 /* AppFrameworkInfo.plist in Resources */ = {isa = PBXBuildFile; fileRef = 3B3967151E833CAA004F5970 /* AppFrameworkInfo.plist */; };
 		74858FAF1ED2DC5600515810 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 74858FAE1ED2DC5600515810 /* AppDelegate.swift */; };
 		97C146FC1CF9000F007C117D /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 97C146FA1CF9000F007C117D /* Main.storyboard */; };
@@ -33,11 +28,6 @@
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
-				249B1EC525DA7A3C00CF510C /* SCSDKCoreKit.xcframework in Embed Frameworks */,
-				249B1EC925DA7A3C00CF510C /* SCSDKLoginKit.xcframework in Embed Frameworks */,
-				249B1EC725DA7A3C00CF510C /* SCSDKCreativeKit.xcframework in Embed Frameworks */,
-				249B1ECB25DA7A3C00CF510C /* SCSDKStoryKit.xcframework in Embed Frameworks */,
-				249B1EC325DA7A3C00CF510C /* SCSDKBitmojiKit.xcframework in Embed Frameworks */,
 			);
 			name = "Embed Frameworks";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -185,7 +175,7 @@
 		97C146E61CF9000F007C117D /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				LastUpgradeCheck = 1020;
+				LastUpgradeCheck = 1250;
 				ORGANIZATIONNAME = "";
 				TargetAttributes = {
 					97C146ED1CF9000F007C117D = {
@@ -349,6 +339,7 @@
 				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
 				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
 				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
 				CLANG_WARN_STRICT_PROTOTYPES = YES;
 				CLANG_WARN_SUSPICIOUS_MOVE = YES;
@@ -367,7 +358,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				SDKROOT = iphoneos;
 				SUPPORTED_PLATFORMS = iphoneos;
@@ -386,7 +377,7 @@
 				DEVELOPMENT_TEAM = UR7Q3R4NLA;
 				ENABLE_BITCODE = NO;
 				INFOPLIST_FILE = Runner/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -422,6 +413,7 @@
 				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
 				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
 				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
 				CLANG_WARN_STRICT_PROTOTYPES = YES;
 				CLANG_WARN_SUSPICIOUS_MOVE = YES;
@@ -446,7 +438,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
 				MTL_ENABLE_DEBUG_INFO = YES;
 				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = iphoneos;
@@ -477,6 +469,7 @@
 				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
 				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
 				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
 				CLANG_WARN_STRICT_PROTOTYPES = YES;
 				CLANG_WARN_SUSPICIOUS_MOVE = YES;
@@ -495,7 +488,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				SDKROOT = iphoneos;
 				SUPPORTED_PLATFORMS = iphoneos;
@@ -516,7 +509,7 @@
 				DEVELOPMENT_TEAM = UR7Q3R4NLA;
 				ENABLE_BITCODE = NO;
 				INFOPLIST_FILE = Runner/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -540,7 +533,7 @@
 				DEVELOPMENT_TEAM = UR7Q3R4NLA;
 				ENABLE_BITCODE = NO;
 				INFOPLIST_FILE = Runner/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",

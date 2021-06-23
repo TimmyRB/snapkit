@@ -61,16 +61,26 @@ public class SwiftSnapkitPlugin: NSObject, FlutterPlugin {
                   let args = arguments as? [String: Any] else { return }
             
             let mediaType = args["mediaType"] as? String
-            let mediaUrl = args["mediaUrl"] as? String
+            let imagePath = args["imagePath"] as? String
+            let videoUrl = args["videoUrl"] as? String
             
             var content: SCSDKSnapContent?
             
             switch (mediaType) {
             case "PHOTO":
-                let photo = SCSDKSnapPhoto(imageUrl: URL(string: mediaUrl!)!)
+                if (!FileManager.default.fileExists(atPath: imagePath!)) {
+                    result(FlutterError(code: "SendMediaArgsError", message: "Image could not be found in filesystem", details: imagePath))
+                }
+                
+                guard let uiImage = UIImage(contentsOfFile: imagePath!) else {
+                    result(FlutterError(code: "SendMediaArgsError", message: "Image could not be loaded into UIImage", details: imagePath!))
+                    return
+                }
+                
+                let photo = SCSDKSnapPhoto(image: uiImage)
                 content = SCSDKPhotoSnapContent(snapPhoto: photo)
             case "VIDEO":
-                let video = SCSDKSnapVideo(videoUrl: URL(string: mediaUrl!)!)
+                let video = SCSDKSnapVideo(videoUrl: URL(string: videoUrl!)!)
                 content = SCSDKVideoSnapContent(snapVideo: video)
             case "NONE":
                 content = SCSDKNoSnapContent()
@@ -86,10 +96,18 @@ public class SwiftSnapkitPlugin: NSObject, FlutterPlugin {
             content?.attachmentUrl = attachmentUrl
             
             if let sticker = args["sticker"] as? [String: Any] {
-                let url = sticker["imageUrl"] as? String
-                let isAnimated = sticker["animated"] as? Bool
+                let imagePath = sticker["imagePath"] as? String
                 
-                let snapSticker = SCSDKSnapSticker(stickerUrl: URL(string: url!)!, isAnimated: isAnimated!)
+                if (!FileManager.default.fileExists(atPath: imagePath!)) {
+                    result(FlutterError(code: "SendMediaArgsError", message: "Image could not be found in filesystem", details: imagePath))
+                }
+                
+                guard let uiImage = UIImage(contentsOfFile: imagePath!) else {
+                    result(FlutterError(code: "SendMediaArgsError", message: "Image could not be loaded into UIImage", details: imagePath!))
+                    return
+                }
+                
+                let snapSticker = SCSDKSnapSticker(stickerImage: uiImage)
                 
                 content?.sticker = snapSticker
             }

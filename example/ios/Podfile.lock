@@ -1,5 +1,7 @@
 PODS:
   - Flutter (1.0.0)
+  - path_provider (0.0.1):
+    - Flutter
   - PINCache (3.0.3):
     - PINCache/Arc-exception-safe (= 3.0.3)
     - PINCache/Core (= 3.0.3)
@@ -10,21 +12,28 @@ PODS:
   - PINOperation (1.2.1)
   - snapkit (1.0.0):
     - Flutter
-    - SnapSDK (= 1.7.0)
-  - SnapSDK (1.7.0):
-    - SnapSDK/SCSDKBitmojiKit (= 1.7.0)
-    - SnapSDK/SCSDKCreativeKit (= 1.7.0)
-    - SnapSDK/SCSDKLoginKit (= 1.7.0)
-    - SnapSDK/SCSDKStoryKit (= 1.7.0)
-  - SnapSDK/SCSDKBitmojiKit (1.7.0):
+    - SnapSDK (= 1.11.0)
+  - SnapSDK (1.11.0):
+    - SnapSDK/SCSDKBitmojiKit (= 1.11.0)
+    - SnapSDK/SCSDKCoreKit (= 1.11.0)
+    - SnapSDK/SCSDKCreativeKit (= 1.11.0)
+    - SnapSDK/SCSDKLoginKit (= 1.11.0)
+    - SnapSDK/SCSDKStoryKit (= 1.11.0)
+  - SnapSDK/SCSDKBitmojiKit (1.11.0):
     - PINCache (< 3.1, >= 2.3)
     - PINOperation (~> 1.2.1)
-  - SnapSDK/SCSDKCreativeKit (1.7.0)
-  - SnapSDK/SCSDKLoginKit (1.7.0)
-  - SnapSDK/SCSDKStoryKit (1.7.0)
+    - SnapSDK/SCSDKCoreKit
+  - SnapSDK/SCSDKCoreKit (1.11.0)
+  - SnapSDK/SCSDKCreativeKit (1.11.0):
+    - SnapSDK/SCSDKCoreKit
+  - SnapSDK/SCSDKLoginKit (1.11.0):
+    - SnapSDK/SCSDKCoreKit
+  - SnapSDK/SCSDKStoryKit (1.11.0):
+    - SnapSDK/SCSDKCoreKit
 
 DEPENDENCIES:
   - Flutter (from `Flutter`)
+  - path_provider (from `.symlinks/plugins/path_provider/ios`)
   - snapkit (from `.symlinks/plugins/snapkit/ios`)
 
 SPEC REPOS:
@@ -36,16 +45,19 @@ SPEC REPOS:
 EXTERNAL SOURCES:
   Flutter:
     :path: Flutter
+  path_provider:
+    :path: ".symlinks/plugins/path_provider/ios"
   snapkit:
     :path: ".symlinks/plugins/snapkit/ios"
 
 SPEC CHECKSUMS:
   Flutter: 434fef37c0980e73bb6479ef766c45957d4b510c
+  path_provider: abfe2b5c733d04e238b0d8691db0cfd63a27a93c
   PINCache: 7a8fc1a691173d21dbddbf86cd515de6efa55086
   PINOperation: 00c935935f1e8cf0d1e2d6b542e75b88fc3e5e20
-  snapkit: 7d022e726fdc5e734be2aafc4e34f31fe4fef266
-  SnapSDK: 068b025faa76b09481b68b981107eded846fae51
+  snapkit: 98ea41e974cf6b3617c2de29844a6da01d9e3df8
+  SnapSDK: ae3dc769d22ee7b92447729481c7c08c1b231acd
 
-PODFILE CHECKSUM: 67a6f6618f00631ac290f1a177cd10b5520a7c50
+PODFILE CHECKSUM: c4e6d8d43d327a11f43721f10ec79e72338d35df
 
 COCOAPODS: 1.10.1
