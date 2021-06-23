@@ -1,15 +1,8 @@
-# snapkit
+# Snapkit
 
-A new flutter plugin project.
+A plugin that allows developers like you to integrate with Snapchat (using [SnapKit](https://kit.snapchat.com)) into your Flutter applications!
 
 ## Getting Started
 
-This project is a starting point for a Flutter
-[plug-in package](https://flutter.dev/developing-packages/),
-a specialized package that includes platform-specific implementation code for
-Android and/or iOS.
-
-For help getting started with Flutter, view our
-[online documentation](https://flutter.dev/docs), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+Follow the [Wiki](/wiki) for steps on how to get setup in an existing project or just copy the [example](/tree/main/example) project into a directory of your choosing and rename it.
 
