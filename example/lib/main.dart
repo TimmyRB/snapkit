@@ -128,11 +128,11 @@ class _MyAppState extends State<MyApp> implements SnapchatAuthStateListener {
         floatingActionButton: FloatingActionButton(
           onPressed: () {
             _snapkit.share(SnapchatMediaType.PHOTO,
-                mediaUrl:
-                    "https://picsum.photos/${this.context.size.width.floor()}/${this.context.size.height.floor()}.jpg",
+                image: NetworkImage(
+                    "https://picsum.photos/${(this.context.size.width.round())}/${this.context.size.height.round()}.jpg"),
                 sticker: SnapchatSticker(
-                    "https://cdn.iconscout.com/icon/free/png-512/flutter-2038877-1720090.png",
-                    false),
+                    image: NetworkImage(
+                        "https://jacobbrasil.com/icons/icon-256x256.png?v=abb739a0a176ce4cc7e9ff069dee372c")),
                 caption: "Snapkit Example Caption!",
                 attachmentUrl: "https://JacobBrasil.com/");
           },

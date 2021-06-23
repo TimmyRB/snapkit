@@ -1,0 +1,5 @@
+{
+    "editor.defaultFormatter": "Dart-Code.dart-code",
+    "editor.formatOnSave": true,
+    "java.configuration.updateBuildConfiguration": "automatic"
+}
