@@ -131,8 +131,7 @@ class _MyAppState extends State<MyApp> implements SnapchatAuthStateListener {
                 image: NetworkImage(
                     "https://picsum.photos/${(this.context.size!.width.round())}/${this.context.size!.height.round()}.jpg"),
                 sticker: SnapchatSticker(
-                    image: NetworkImage(
-                        "https://jacobbrasil.com/icons/icon-256x256.png?v=abb739a0a176ce4cc7e9ff069dee372c")),
+                    image: Image.asset('images/icon-256x256.png').image),
                 caption: "Snapkit Example Caption!",
                 attachmentUrl: "https://JacobBrasil.com/");
           },
