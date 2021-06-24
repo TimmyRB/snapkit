@@ -18,7 +18,7 @@ class _MyAppState extends State<MyApp> implements SnapchatAuthStateListener {
       GlobalKey<ScaffoldMessengerState>();
 
   String _platformVersion = 'Unknown';
-  SnapchatUser _snapchatUser;
+  SnapchatUser? _snapchatUser;
   Snapkit _snapkit = Snapkit();
 
   bool _isSnackOpen = false;
@@ -64,7 +64,7 @@ class _MyAppState extends State<MyApp> implements SnapchatAuthStateListener {
         await _snapkit.login();
       else if (!_isSnackOpen) {
         _isSnackOpen = true;
-        _scaffoldMessengerKey.currentState
+        _scaffoldMessengerKey.currentState!
             .showSnackBar(
                 SnackBar(content: Text("Snapchat App not Installed.")))
             .closed
@@ -109,11 +109,11 @@ class _MyAppState extends State<MyApp> implements SnapchatAuthStateListener {
                     margin: EdgeInsets.all(15),
                     child: CircleAvatar(
                       backgroundColor: Colors.lightBlue,
-                      foregroundImage: NetworkImage(_snapchatUser.bitmojiUrl),
+                      foregroundImage: NetworkImage(_snapchatUser!.bitmojiUrl),
                     )),
-              if (_snapchatUser != null) Text(_snapchatUser.displayName),
+              if (_snapchatUser != null) Text(_snapchatUser!.displayName),
               if (_snapchatUser != null)
-                Text(_snapchatUser.externalId,
+                Text(_snapchatUser!.externalId,
                     style: TextStyle(color: Colors.grey, fontSize: 9.0)),
               Text('Running on: $_platformVersion\n'),
               if (_snapchatUser == null)
@@ -129,7 +129,7 @@ class _MyAppState extends State<MyApp> implements SnapchatAuthStateListener {
           onPressed: () {
             _snapkit.share(SnapchatMediaType.PHOTO,
                 image: NetworkImage(
-                    "https://picsum.photos/${(this.context.size.width.round())}/${this.context.size.height.round()}.jpg"),
+                    "https://picsum.photos/${(this.context.size!.width.round())}/${this.context.size!.height.round()}.jpg"),
                 sticker: SnapchatSticker(
                     image: NetworkImage(
                         "https://jacobbrasil.com/icons/icon-256x256.png?v=abb739a0a176ce4cc7e9ff069dee372c")),
@@ -143,7 +143,7 @@ class _MyAppState extends State<MyApp> implements SnapchatAuthStateListener {
   }
 
   @override
-  void onLogin(SnapchatUser user) {
+  void onLogin(SnapchatUser? user) {
     setState(() {
       _snapchatUser = user;
     });
