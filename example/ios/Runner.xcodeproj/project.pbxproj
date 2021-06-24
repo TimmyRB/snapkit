@@ -13,6 +13,11 @@
 		249B1EC625DA7A3C00CF510C /* SCSDKCreativeKit.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = 249B1EBF25DA7A3C00CF510C /* SCSDKCreativeKit.xcframework */; };
 		249B1EC825DA7A3C00CF510C /* SCSDKLoginKit.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = 249B1EC025DA7A3C00CF510C /* SCSDKLoginKit.xcframework */; };
 		249B1ECA25DA7A3C00CF510C /* SCSDKStoryKit.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = 249B1EC125DA7A3C00CF510C /* SCSDKStoryKit.xcframework */; };
+		24FDDDDB26842E2F00A6E3F9 /* SCSDKBitmojiKit.xcframework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 249B1EBD25DA7A3C00CF510C /* SCSDKBitmojiKit.xcframework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		24FDDDDC26842E2F00A6E3F9 /* SCSDKCoreKit.xcframework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 249B1EBE25DA7A3C00CF510C /* SCSDKCoreKit.xcframework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		24FDDDDD26842E2F00A6E3F9 /* SCSDKCreativeKit.xcframework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 249B1EBF25DA7A3C00CF510C /* SCSDKCreativeKit.xcframework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		24FDDDDE26842E2F00A6E3F9 /* SCSDKLoginKit.xcframework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 249B1EC025DA7A3C00CF510C /* SCSDKLoginKit.xcframework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		24FDDDDF26842E2F00A6E3F9 /* SCSDKStoryKit.xcframework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 249B1EC125DA7A3C00CF510C /* SCSDKStoryKit.xcframework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		3B3967161E833CAA004F5970 /* AppFrameworkInfo.plist in Resources */ = {isa = PBXBuildFile; fileRef = 3B3967151E833CAA004F5970 /* AppFrameworkInfo.plist */; };
 		74858FAF1ED2DC5600515810 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 74858FAE1ED2DC5600515810 /* AppDelegate.swift */; };
 		97C146FC1CF9000F007C117D /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 97C146FA1CF9000F007C117D /* Main.storyboard */; };
@@ -28,6 +33,11 @@
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
+				24FDDDDB26842E2F00A6E3F9 /* SCSDKBitmojiKit.xcframework in Embed Frameworks */,
+				24FDDDDC26842E2F00A6E3F9 /* SCSDKCoreKit.xcframework in Embed Frameworks */,
+				24FDDDDD26842E2F00A6E3F9 /* SCSDKCreativeKit.xcframework in Embed Frameworks */,
+				24FDDDDE26842E2F00A6E3F9 /* SCSDKLoginKit.xcframework in Embed Frameworks */,
+				24FDDDDF26842E2F00A6E3F9 /* SCSDKStoryKit.xcframework in Embed Frameworks */,
 			);
 			name = "Embed Frameworks";
 			runOnlyForDeploymentPostprocessing = 0;

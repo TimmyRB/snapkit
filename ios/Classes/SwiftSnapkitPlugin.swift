@@ -82,11 +82,8 @@ public class SwiftSnapkitPlugin: NSObject, FlutterPlugin {
             case "VIDEO":
                 let video = SCSDKSnapVideo(videoUrl: URL(string: videoUrl!)!)
                 content = SCSDKVideoSnapContent(snapVideo: video)
-            case "NONE":
-                content = SCSDKNoSnapContent()
             default:
-                result(FlutterError(code: "SendMediaArgsError", message: "Invalid Media Type", details: mediaType))
-                return
+                content = SCSDKNoSnapContent()
             }
             
             let caption = args["caption"] as? String
