@@ -7,7 +7,7 @@ import androidx.annotation.Nullable;
 
 import com.snapchat.kit.sdk.SnapCreative;
 import com.snapchat.kit.sdk.SnapLogin;
-import com.snapchat.kit.sdk.core.controller.LoginStateController;
+import com.snapchat.kit.sdk.core.controller.LoginStateController.OnLoginStateChangedListener;
 import com.snapchat.kit.sdk.creative.api.SnapCreativeKitApi;
 import com.snapchat.kit.sdk.creative.exceptions.SnapMediaSizeException;
 import com.snapchat.kit.sdk.creative.exceptions.SnapStickerSizeException;
@@ -38,7 +38,7 @@ import io.flutter.plugin.common.MethodChannel.Result;
 /**
  * SnapkitPlugin
  */
-public class SnapkitPlugin implements FlutterPlugin, MethodCallHandler, ActivityAware {
+public class SnapkitPlugin implements FlutterPlugin, MethodCallHandler, ActivityAware, OnLoginStateChangedListener {
     /// The MethodChannel that will the communication between Flutter and native Android
     ///
     /// This local reference serves to register the plugin with the Flutter Engine and unregister it
@@ -59,7 +59,7 @@ public class SnapkitPlugin implements FlutterPlugin, MethodCallHandler, Activity
     public void onMethodCall(@NonNull MethodCall call, @NonNull final Result result) {
         switch (call.method) {
             case "callLogin":
-//                SnapLogin.getLoginStateController(_activity).addOnLoginStateChangedListener(this);
+                SnapLogin.getLoginStateController(_activity).addOnLoginStateChangedListener(this);
                 SnapLogin.getAuthTokenManager(_activity).startTokenGrant();
                 this._result = result;
                 break;
@@ -158,24 +158,24 @@ public class SnapkitPlugin implements FlutterPlugin, MethodCallHandler, Activity
     }
 
     @Override
+    public void onLoginSucceeded() {
+        this._result.success("Login Success");
+    }
+
+    @Override
+    public void onLoginFailed() {
+        this._result.error("LoginError", "Error Logging In", null);
+    }
+
+    @Override
+    public void onLogout() {
+        this._result.success("Logout Success");
+    }
+
+    @Override
     public void onDetachedFromEngine(@NonNull FlutterPluginBinding binding) {
         channel.setMethodCallHandler(null);
     }
-
-//    @Override
-//    public void onLoginSucceeded() {
-//        this._result.success("Login Success");
-//    }
-//
-//    @Override
-//    public void onLoginFailed() {
-//        this._result.error("LoginError", "Error Logging In", null);
-//    }
-//
-//    @Override
-//    public void onLogout() {
-//        this._result.success("Logout Success");
-//    }
 
     @Override
     public void onAttachedToActivity(@NonNull ActivityPluginBinding binding) {

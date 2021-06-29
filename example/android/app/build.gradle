@@ -46,6 +46,15 @@ android {
             signingConfig signingConfigs.debug
         }
     }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+    dependenciesInfo {
+        includeInBundle true
+        includeInApk true
+    }
+    buildToolsVersion '29.0.2'
 }
 
 flutter {
