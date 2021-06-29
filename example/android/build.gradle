@@ -13,14 +13,16 @@ allprojects {
     repositories {
         google()
         jcenter()
+        maven {
+            url "https://storage.googleapis.com/snap-kit-build/maven"
+        }
     }
 }
 
 rootProject.buildDir = '../build'
+
 subprojects {
     project.buildDir = "${rootProject.buildDir}/${project.name}"
-}
-subprojects {
     project.evaluationDependsOn(':app')
 }
 

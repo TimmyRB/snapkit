@@ -60,3 +60,12 @@ android {
 flutter {
     source '../..'
 }
+
+dependencies {
+    implementation([
+            'com.snapchat.kit.sdk:creative:1.10.0',
+            'com.snapchat.kit.sdk:login:1.10.0',
+            'com.snapchat.kit.sdk:bitmoji:1.10.0',
+            'com.snapchat.kit.sdk:core:1.10.0'
+    ])
+}
