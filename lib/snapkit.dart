@@ -180,7 +180,7 @@ class SnapchatSticker {
 }
 
 abstract class SnapchatAuthStateListener {
-  void onLogin(SnapchatUser? user);
+  void onLogin(SnapchatUser user);
   void onLogout();
 }
 

@@ -151,7 +151,7 @@ class _MyAppState
   }
 
   // @override
-  // void onLogin(SnapchatUser? user) {
+  // void onLogin(SnapchatUser user) {
   //   setState(() {
   //     _snapchatUser = user;
   //   });
