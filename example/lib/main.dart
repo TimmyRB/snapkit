@@ -13,13 +13,16 @@ class MyApp extends StatefulWidget {
   _MyAppState createState() => _MyAppState();
 }
 
-class _MyAppState extends State<MyApp> implements SnapchatAuthStateListener {
+class _MyAppState
+    extends State<MyApp> /* implements SnapchatAuthStateListener */ {
   GlobalKey<ScaffoldMessengerState> _scaffoldMessengerKey =
       GlobalKey<ScaffoldMessengerState>();
 
   String _platformVersion = 'Unknown';
   SnapchatUser? _snapchatUser;
   Snapkit _snapkit = Snapkit();
+
+  late StreamSubscription<SnapchatUser?> subscription;
 
   bool _isSnackOpen = false;
 
@@ -28,13 +31,19 @@ class _MyAppState extends State<MyApp> implements SnapchatAuthStateListener {
     super.initState();
     initPlatformState();
 
-    _snapkit.addAuthStateListener(this);
+    // _snapkit.addAuthStateListener(this);
 
-    // _snapkit.onAuthStateChanged.listen((SnapchatUser user) {
-    //   setState(() {
-    //     _snapchatUser = user;
-    //   });
-    // });
+    subscription = _snapkit.onAuthStateChanged.listen((SnapchatUser? user) {
+      setState(() {
+        _snapchatUser = user;
+      });
+    });
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    subscription.cancel();
   }
 
   // Platform messages are asynchronous, so we initialize in an async method.
@@ -141,17 +150,17 @@ class _MyAppState extends State<MyApp> implements SnapchatAuthStateListener {
     ));
   }
 
-  @override
-  void onLogin(SnapchatUser? user) {
-    setState(() {
-      _snapchatUser = user;
-    });
-  }
+  // @override
+  // void onLogin(SnapchatUser? user) {
+  //   setState(() {
+  //     _snapchatUser = user;
+  //   });
+  // }
 
-  @override
-  void onLogout() {
-    setState(() {
-      _snapchatUser = null;
-    });
-  }
+  // @override
+  // void onLogout() {
+  //   setState(() {
+  //     _snapchatUser = null;
+  //   });
+  // }
 }

@@ -19,22 +19,24 @@ class Snapkit {
   late StreamController<SnapchatUser?> _authStatusController;
   late Stream<SnapchatUser?> onAuthStateChanged;
 
-  late SnapchatAuthStateListener _authStateListener;
+  SnapchatAuthStateListener? _authStateListener;
 
   Snapkit() {
-    this._authStatusController = StreamController<SnapchatUser?>();
-    this.onAuthStateChanged = _authStatusController.stream;
+    this._authStatusController = new StreamController<SnapchatUser?>();
+    this.onAuthStateChanged = this._authStatusController.stream;
     this._authStatusController.add(null);
 
     this.currentUser.then((user) {
       this._authStatusController.add(user);
-      this._authStateListener.onLogin(user);
+      this._authStateListener?.onLogin(user);
     }).catchError((error, StackTrace stacktrace) {
       this._authStatusController.add(null);
-      this._authStateListener.onLogout();
+      this._authStateListener?.onLogout();
     });
   }
 
+  /// Add a class that implements the `SnapchatAuthStateListener` class as
+  /// a listener
   void addAuthStateListener(SnapchatAuthStateListener authStateListener) {
     this._authStateListener = authStateListener;
   }
@@ -46,7 +48,7 @@ class Snapkit {
     await _channel.invokeMethod('callLogin');
     final currentUser = await this.currentUser;
     this._authStatusController.add(currentUser);
-    this._authStateListener.onLogin(currentUser);
+    this._authStateListener?.onLogin(currentUser);
     return currentUser;
   }
 
@@ -56,7 +58,11 @@ class Snapkit {
   Future<void> logout() async {
     await _channel.invokeMethod('callLogout');
     this._authStatusController.add(null);
-    this._authStateListener.onLogout();
+    this._authStateListener?.onLogout();
+  }
+
+  /// Closes the `AuthState` Stream
+  void closeStream() {
     this._authStatusController.close();
   }
 
