@@ -126,9 +126,12 @@ class _MyAppState
                     style: TextStyle(color: Colors.grey, fontSize: 9.0)),
               Text('Running on: $_platformVersion\n'),
               if (_snapchatUser == null)
-                ElevatedButton(
-                    onPressed: () => loginUser(),
-                    child: Text("Login with Snapchat")),
+                Container(
+                  padding: EdgeInsets.only(left: 8.0, right: 8.0),
+                  child: SnapchatButton(
+                    snapkit: _snapkit,
+                  ),
+                ),
               if (_snapchatUser != null)
                 TextButton(onPressed: () => logoutUser(), child: Text("Logout"))
             ],

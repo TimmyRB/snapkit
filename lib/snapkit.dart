@@ -11,6 +11,10 @@ import 'package:path_provider/path_provider.dart';
 class Snapkit {
   static const MethodChannel _channel = const MethodChannel('snapkit');
 
+  /// platformVersion returns a `String` of the current platform
+  /// the appplication is running on, it usally includes both the
+  /// Operating System name eg (iOS / Android) and the Version
+  /// Number eg (15 / 12)
   static Future<String> get platformVersion async {
     final String version = await _channel.invokeMethod('getPlatformVersion');
     return version;
@@ -21,6 +25,7 @@ class Snapkit {
 
   SnapchatAuthStateListener? _authStateListener;
 
+  /// Creates a new `Snapkit` instance
   Snapkit() {
     this._authStatusController = new StreamController<SnapchatUser?>();
     this.onAuthStateChanged = this._authStatusController.stream;
@@ -54,7 +59,8 @@ class Snapkit {
 
   /// logout clears your apps local session and refresh tokens. You will
   /// no longer be able to make requests to fetch the `SnapchatUser` with
-  /// `currentUser`. Calling this will also close the `authStatus` stream.
+  /// `currentUser`. Call `closeStream()` to close the stream and prevent a
+  /// resource sink.
   Future<void> logout() async {
     await _channel.invokeMethod('callLogout');
     this._authStatusController.add(null);
@@ -79,11 +85,14 @@ class Snapkit {
     }
   }
 
-  /// Share shares Media to be sent in the Snapchat app. A Type & Url supplied
-  /// through `mediaType` and `mediaUrl` will be the background, with the
-  /// `Sticker` being a User adjustable image, the `Caption` being User editable
-  /// text, and the `AttachmentUrl` will be an attached link User's can access
-  /// by swiping upwards when they view the Snap
+  /// share shares Media to be sent in the Snapchat app. `mediaType`
+  /// defines what type of background media is to be shared.
+  /// `SnapchatMediaType.PHOTO` requires `image` to be non null.
+  /// `SnapchatMediaType.VIDEO` requires `videoUrl` to be non null.
+  /// `SnapchatMediaType.NONE` allows the User to take a photo or
+  /// video
+  ///
+  /// `caption`, `sticker` and `attachmentUrl` are optional
   Future<void> share(SnapchatMediaType mediaType,
       {ImageProvider<Object>? image,
       String? videoUrl,
@@ -147,6 +156,7 @@ class SnapchatUser {
   /// An automatic updating static URL to a Snapchat user's Bitmoji
   final String bitmojiUrl;
 
+  /// Creates a new `SnapchatUser`
   SnapchatUser(this.externalId, this.displayName, this.bitmojiUrl);
 }
 
@@ -154,6 +164,7 @@ class SnapchatSticker {
   /// Url to the Image to be used as a Sticker
   ImageProvider<Object> image;
 
+  /// Creates a new `SnapchatSticker`
   SnapchatSticker({required this.image});
 
   Future<Map<String, dynamic>> toMap() async {
@@ -193,4 +204,158 @@ enum SnapchatMediaType {
 
   /// Let the User take their own Photo or Video
   NONE
+}
+
+enum SnapchatButtonColors {
+  /// Snapchat Yellow
+  YELLOW,
+
+  /// Snapchat Black
+  BLACK,
+
+  /// Snapchat White
+  WHITE,
+
+  /// Snapchat Gray
+  GRAY
+}
+
+extension SnapchatButtonExtension on SnapchatButtonColors {
+  /// Gets the Button Color value associated with ENUM
+  Color get color {
+    switch (this) {
+      case SnapchatButtonColors.YELLOW:
+        return const Color.fromRGBO(255, 252, 0, 1);
+      case SnapchatButtonColors.BLACK:
+        return const Color.fromRGBO(0, 0, 0, 1);
+      case SnapchatButtonColors.WHITE:
+        return const Color.fromRGBO(255, 255, 255, 1);
+      case SnapchatButtonColors.GRAY:
+        return const Color.fromRGBO(244, 244, 244, 1);
+    }
+  }
+
+  /// Gets the Text Color to contrast button color
+  Color get textColor {
+    switch (this) {
+      case SnapchatButtonColors.BLACK:
+        return const Color.fromRGBO(255, 255, 255, 1);
+      default:
+        return const Color.fromRGBO(0, 0, 0, 1);
+    }
+  }
+
+  /// Gets the Image to contrast button color
+  AssetImage get ghost {
+    switch (this) {
+      case SnapchatButtonColors.BLACK:
+        return AssetImage('assets/images/GhostLogoDark.png',
+            package: 'snapkit');
+      default:
+        return AssetImage('assets/images/GhostLogoLight.png',
+            package: 'snapkit');
+    }
+  }
+}
+
+class SnapchatButtonFontOptions {
+  /// Change the `Text` font size
+  final double? fontSize;
+
+  /// Change the `Text` font weight
+  final FontWeight? fontWeight;
+
+  /// Change the `Text` font family
+  final String? fontFamily;
+
+  /// Change the `Text` font family fallback(s)
+  final List<String>? fontFamilyFallback;
+
+  /// Change the `Text` font features
+  final List<FontFeature>? fontFeatures;
+
+  /// Change the `Text` font style
+  final FontStyle? fontStyle;
+
+  /// Custom Font Options
+  ///
+  /// WARNING: Changing these will mean the button no longer follows
+  /// Snapchat's Brand Guidelines
+  SnapchatButtonFontOptions({
+    this.fontSize,
+    this.fontWeight,
+    this.fontFamily,
+    this.fontFamilyFallback,
+    this.fontFeatures,
+    this.fontStyle,
+  });
+}
+
+class SnapchatButton extends StatelessWidget {
+  /// Additional Font Options to change text
+  final SnapchatButtonFontOptions? fontOptions;
+
+  /// Desired Button Color
+  final SnapchatButtonColors buttonColor;
+
+  /// Snapkit Object used by button to Login
+  final Snapkit snapkit;
+
+  /// Creates a new `SnapchatButton` that by default conforms to
+  /// Snapchat's Brand Guidelines
+  const SnapchatButton({
+    Key? key,
+    required this.snapkit,
+    this.buttonColor = SnapchatButtonColors.YELLOW,
+    this.fontOptions,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return TextButtonTheme(
+      data: TextButtonThemeData(
+          style: ButtonStyle(
+              shape: MaterialStateProperty.resolveWith<OutlinedBorder>(
+                (states) => RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(8.0),
+                ),
+              ),
+              backgroundColor: MaterialStateProperty.resolveWith<Color?>(
+                  (states) => buttonColor.color),
+              padding: MaterialStateProperty.resolveWith<EdgeInsetsGeometry>(
+                  (states) => EdgeInsets.only(
+                      left: 22, top: 20, right: 22, bottom: 20)))),
+      child: TextButton(
+        onPressed: () => this.snapkit.login(),
+        style: ButtonStyle(
+            padding: MaterialStateProperty.resolveWith<EdgeInsets>(
+                (states) => EdgeInsets.all(16.0))),
+        child: Row(
+          children: [
+            Container(
+              padding: EdgeInsets.only(right: 16.0),
+              child: Image(
+                image: buttonColor.ghost,
+                fit: BoxFit.contain,
+                height: 32.0,
+                width: 32.0,
+              ),
+            ),
+            Text(
+              "Login with Snapchat",
+              style: TextStyle(
+                color: this.buttonColor.textColor,
+                fontFamily: this.fontOptions?.fontFamily,
+                fontFamilyFallback: this.fontOptions?.fontFamilyFallback,
+                fontFeatures: this.fontOptions?.fontFeatures,
+                fontSize: this.fontOptions?.fontSize,
+                fontStyle: this.fontOptions?.fontStyle,
+                fontWeight: this.fontOptions?.fontWeight,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
 }
