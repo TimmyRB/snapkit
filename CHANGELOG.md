@@ -19,3 +19,7 @@
 * Fixed AuthState Stream
 * Fixed Warning when not using SnapchatAuthStateListener class
 * Added Usage Documentation
+
+## 1.1.0
+
+* Added a new SnapchatButton Widget that follows Snapchat's Brand Guidelines
