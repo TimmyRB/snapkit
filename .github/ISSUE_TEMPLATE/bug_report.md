@@ -1,38 +1,59 @@
 ---
-name: Bug report
-about: Create a report to help us improve
+name: Project Help
+about: Select this if you have a bug to report or are encountering an error
 title: ''
 labels: ''
 assignees: ''
 
 ---
 
-**Describe the bug**
-A clear and concise description of what the bug is.
+<!-- Thank you for using Snapkit!
 
-**To Reproduce**
-Steps to reproduce the behavior:
-1. Go to '...'
-2. Click on '....'
-3. Scroll down to '....'
-4. See error
+     Before creating an issue, make sure to check our documentation
+     and other issues for possible fixes to your problem
+      * https://pub.dev/documentation/snapkit/latest/
+      * https://github.com/TimmyRB/snapkit/wiki
+-->
 
-**Expected behavior**
-A clear and concise description of what you expected to happen.
+## Steps to Reproduce
 
-**Screenshots**
-If applicable, add screenshots to help explain your problem.
+<!-- You must include full steps to reproduce so that we can reproduce the problem. -->
 
-**Desktop (please complete the following information):**
- - OS: [e.g. iOS]
- - Browser [e.g. chrome, safari]
- - Version [e.g. 22]
+1. Run `flutter run`
+2. Update the files as follows: ... <!-- include every file that is different from the template app! -->
+3. ... <!-- describe how to reproduce the problem -->
 
-**Smartphone (please complete the following information):**
- - Device: [e.g. iPhone6]
- - OS: [e.g. iOS8.1]
- - Browser [e.g. stock browser, safari]
- - Version [e.g. 22]
+**Expected results:** <!-- what did you want to see? -->
 
-**Additional context**
-Add any other context about the problem here.
+**Actual results:** <!-- what did you see? -->
+
+<details>
+  <summary>Logs</summary>
+
+<!--
+      Run your application with `flutter run --verbose` and attach all the
+      log output below between the lines with the backticks. If there is an
+      exception, please see if the error message includes enough information
+      to explain how to solve the issue.
+-->
+
+```
+ flutter run --verbose goes here
+```
+
+<!--
+     Run `flutter analyze` and attach any output of that command below.
+     If there are any analysis errors, try resolving them before filing this issue.
+-->
+
+```
+ flutter analyze goes here
+```
+
+<!-- Finally, paste the output of running `flutter doctor -v` here. -->
+
+```
+ flutter doctor -v goes here
+```
+
+</details>
