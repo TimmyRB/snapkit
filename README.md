@@ -1,5 +1,7 @@
 # Snapkit
 
+[![Code Analysis](https://github.com/TimmyRB/snapkit/actions/workflows/code-analysis.yml/badge.svg)](https://github.com/TimmyRB/snapkit/actions/workflows/code-analysis.yml) [![Android Builds](https://github.com/TimmyRB/snapkit/actions/workflows/build-android.yml/badge.svg)](https://github.com/TimmyRB/snapkit/actions/workflows/build-android.yml) [![iOS Builds](https://github.com/TimmyRB/snapkit/actions/workflows/build-ios.yml/badge.svg)](https://github.com/TimmyRB/snapkit/actions/workflows/build-ios.yml)
+
 A plugin that allows developers like you to integrate with Snapchat (using [SnapKit](https://kit.snapchat.com)) into your Flutter applications!
 
 ## Getting Started
