@@ -60,9 +60,12 @@ public class SwiftSnapkitPlugin: NSObject, FlutterPlugin {
             guard let arguments = call.arguments,
                   let args = arguments as? [String: Any] else { return }
             
-            SCSDKVerifyClient.verify(from: (UIApplication.shared.keyWindow?.rootViewController)!, phone: (args["phoneNumber"] as? String)!, region: (args["region"] as? String)!) { phoneId, verifyId, err in
+            let phoneNumber = args["phoneNumber"] as? String
+            let region = args["region"] as? String
+            
+            SCSDKVerifyClient.verify(from: (UIApplication.shared.keyWindow?.rootViewController)!, phone: phoneNumber!, region: region!) { phoneId, verifyId, err in
                 if err != nil {
-                    result(FlutterError(code: "VerifyNumberError", message: "Error occurred while verifying phone number", details: err?.localizedDescription))
+                    result(FlutterError(code: "VerifyNumberError", message: "Error while verifying phone number", details: err!.localizedDescription))
                 }
                 
                 result([phoneId, verifyId])
