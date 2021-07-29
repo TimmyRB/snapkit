@@ -22,6 +22,10 @@ class _MyAppState
   SnapchatUser? _snapchatUser;
   Snapkit _snapkit = Snapkit();
 
+  TextEditingController _regionController = TextEditingController(text: 'US');
+  TextEditingController _phoneController =
+      TextEditingController(text: '0001234567');
+
   late StreamSubscription<SnapchatUser?> subscription;
 
   bool _isSnackOpen = false;
@@ -75,7 +79,7 @@ class _MyAppState
         _isSnackOpen = true;
         _scaffoldMessengerKey.currentState!
             .showSnackBar(
-                SnackBar(content: Text("Snapchat App not Installed.")))
+                SnackBar(content: Text('Snapchat App not Installed.')))
             .closed
             .then((_) {
           _isSnackOpen = false;
@@ -133,7 +137,52 @@ class _MyAppState
                   ),
                 ),
               if (_snapchatUser != null)
-                TextButton(onPressed: () => logoutUser(), child: Text("Logout"))
+                TextButton(
+                    onPressed: () => logoutUser(), child: Text('Logout')),
+              Container(
+                margin: EdgeInsets.only(top: 16.0),
+                child: Row(
+                  children: [
+                    Spacer(),
+                    ConstrainedBox(
+                      constraints: BoxConstraints(maxWidth: 25),
+                      child: TextField(
+                        controller: _regionController,
+                        keyboardType: TextInputType.text,
+                      ),
+                    ),
+                    Spacer(),
+                    ConstrainedBox(
+                      constraints: BoxConstraints(maxWidth: 150),
+                      child: TextField(
+                        controller: _phoneController,
+                        keyboardType: TextInputType.phone,
+                      ),
+                    ),
+                    Spacer(),
+                    TextButton(
+                      onPressed: () => _snapkit
+                          .verifyPhoneNumber(
+                            _regionController.text,
+                            _phoneController.text,
+                          )
+                          .then((isVerified) => _scaffoldMessengerKey
+                              .currentState
+                              ?.showSnackBar(SnackBar(
+                                  content: Text(
+                                      'Phone Number is ${isVerified ? '' : 'not '}verified'))))
+                          .catchError((error, StackTrace stacktrace) {
+                        _scaffoldMessengerKey.currentState?.showSnackBar(
+                            SnackBar(
+                                content: Text(
+                                    (error as PlatformException).details)));
+                      }),
+                      child: Text('Verify'),
+                    ),
+                    Spacer(),
+                  ],
+                ),
+              ),
             ],
           ),
         ),
@@ -141,11 +190,11 @@ class _MyAppState
           onPressed: () {
             _snapkit.share(SnapchatMediaType.PHOTO,
                 image: NetworkImage(
-                    "https://picsum.photos/${(this.context.size!.width.round())}/${this.context.size!.height.round()}.jpg"),
+                    'https://picsum.photos/${(this.context.size!.width.round())}/${this.context.size!.height.round()}.jpg'),
                 sticker: SnapchatSticker(
                     image: Image.asset('images/icon-256x256.png').image),
-                caption: "Snapkit Example Caption!",
-                attachmentUrl: "https://JacobBrasil.com/");
+                caption: 'Snapkit Example Caption!',
+                attachmentUrl: 'https://JacobBrasil.com/');
           },
           child: Icon(Icons.camera),
         ),
