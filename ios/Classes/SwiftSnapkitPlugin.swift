@@ -56,6 +56,17 @@ public class SwiftSnapkitPlugin: NSObject, FlutterPlugin {
         case "callLogout":
             SCSDKLoginClient.clearToken()
             result("Logout Success")
+        case "verifyNumber":
+            guard let arguments = call.arguments,
+                  let args = arguments as? [String: Any] else { return }
+            
+            SCSDKVerifyClient.verify(from: (UIApplication.shared.keyWindow?.rootViewController)!, phone: (args["phoneNumber"] as? String)!, region: (args["region"] as? String)!) { phoneId, verifyId, err in
+                if err != nil {
+                    result(FlutterError(code: "VerifyNumberError", message: "Error occurred while verifying phone number", details: err?.localizedDescription))
+                }
+                
+                result([phoneId, verifyId])
+            }
         case "sendMedia":
             guard let arguments = call.arguments,
                   let args = arguments as? [String: Any] else { return }

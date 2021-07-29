@@ -7,6 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
 import 'package:path_provider/path_provider.dart';
+import 'package:http/http.dart' as http;
 
 class Snapkit {
   static const MethodChannel _channel = const MethodChannel('snapkit');
@@ -55,6 +56,44 @@ class Snapkit {
     this._authStatusController.add(currentUser);
     this._authStateListener?.onLogin(currentUser);
     return currentUser;
+  }
+
+  /// verifyPhoneNumber verifies if the `phoneNumber` passed
+  /// matches the phone number of the currently signed in
+  /// user in the snapchat app. Always returns `false` on
+  /// Android. A two digit `region` code and `phoneNumber`
+  /// must be passed
+  Future<bool> verifyPhoneNumber(int region, String phoneNumber) async {
+    List<dynamic> resVerify =
+        await _channel.invokeMethod('verifyNumber', <String, String>{
+      'phoneNumber': phoneNumber,
+      'region': region.toString(),
+    }) as List<dynamic>;
+
+    String phoneId = resVerify[0];
+    String verifyId = resVerify[1];
+
+    http.Response res = await http.post(
+      Uri(
+        scheme: 'https',
+        host: 'api.snapkit.com',
+        path: '/v1/phoneverify/verify_result',
+      ),
+      body: {
+        'phone_number_id': phoneId,
+        'phone_number_verify_id': verifyId,
+        'phone_number': phoneNumber,
+        'region': region.toString(),
+      },
+    );
+
+    print('${res.statusCode}: ${res.body}');
+
+    if (res.statusCode == 200) {
+      return false;
+    } else {
+      return false;
+    }
   }
 
   /// logout clears your apps local session and refresh tokens. You will
