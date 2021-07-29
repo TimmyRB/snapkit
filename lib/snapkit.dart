@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:convert';
 import 'dart:io';
 import 'dart:typed_data';
 import 'dart:ui';
@@ -63,36 +64,39 @@ class Snapkit {
   /// user in the snapchat app. Always returns `false` on
   /// Android. A two digit `region` code and `phoneNumber`
   /// must be passed
-  Future<bool> verifyPhoneNumber(int region, String phoneNumber) async {
-    List<dynamic> resVerify =
-        await _channel.invokeMethod('verifyNumber', <String, String>{
-      'phoneNumber': phoneNumber,
-      'region': region.toString(),
-    }) as List<dynamic>;
-
-    String phoneId = resVerify[0];
-    String verifyId = resVerify[1];
-
-    http.Response res = await http.post(
-      Uri(
-        scheme: 'https',
-        host: 'api.snapkit.com',
-        path: '/v1/phoneverify/verify_result',
-      ),
-      body: {
-        'phone_number_id': phoneId,
-        'phone_number_verify_id': verifyId,
-        'phone_number': phoneNumber,
+  Future<bool> verifyPhoneNumber(String region, String phoneNumber) async {
+    try {
+      List<dynamic> resVerify =
+          await _channel.invokeMethod('verifyNumber', <String, String>{
+        'phoneNumber': phoneNumber,
         'region': region.toString(),
-      },
-    );
+      }) as List<dynamic>;
 
-    print('${res.statusCode}: ${res.body}');
+      String phoneId = resVerify[0];
+      String verifyId = resVerify[1];
 
-    if (res.statusCode == 200) {
-      return false;
-    } else {
-      return false;
+      http.Response res = await http.post(
+        Uri(
+          scheme: 'https',
+          host: 'api.snapkit.com',
+          path: '/v1/phoneverify/verify_result',
+        ),
+        body: {
+          'phone_number_id': phoneId,
+          'phone_number_verify_id': verifyId,
+          'phone_number': phoneNumber,
+          'region': region.toString(),
+        },
+      );
+
+      if (res.statusCode == 200) {
+        dynamic json = jsonDecode(res.body);
+        return (json['verified'] as bool?) ?? false;
+      } else {
+        return false;
+      }
+    } on PlatformException catch (e) {
+      throw e;
     }
   }
 
