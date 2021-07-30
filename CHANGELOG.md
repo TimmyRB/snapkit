@@ -23,3 +23,7 @@
 ## 1.1.0
 
 * Added a new SnapchatButton Widget that follows Snapchat's Brand Guidelines
+
+## 1.2.0
+
+* Added Phone Number verification through Snapchat
