@@ -141,6 +141,12 @@ public class SnapkitPlugin implements FlutterPlugin, MethodCallHandler, Activity
 
                 this.creativeKitApi.send(content);
                 break;
+            case "verifyNumber":
+                List<String> res = new ArrayList<String>();
+                res.add("");
+                res.add("");
+                result.success(res);
+                break;
             case "callLogout":
                 SnapLogin.getAuthTokenManager(_activity).clearToken();
                 this._result = result;
