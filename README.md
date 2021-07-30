@@ -59,6 +59,15 @@ await snapkit.logout();
 snapkit.logout().then(() => {});
 ```
 
+### Verify a Phone Number
+Returns a `bool` if Snapchat has verified the phone number, throws
+an error if there was a problem. Always returns `false` on Android
+```dart
+snapkit.verifyPhoneNumber('US', '1231234567')
+  .then(isVerified {})
+  .catchError((error, StackTrace stacktrace) {})
+```
+
 ## Share to Snapchat
 
 ### Share to LIVE
