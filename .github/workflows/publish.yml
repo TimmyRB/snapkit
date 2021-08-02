@@ -1,6 +1,8 @@
 name: Publish to pub.dev
 
-on: push
+on: 
+  push:
+    branches: [ main ]
 
 jobs:
   publishing:
