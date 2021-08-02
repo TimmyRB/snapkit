@@ -9,6 +9,7 @@ import 'package:flutter/services.dart';
 
 import 'package:path_provider/path_provider.dart';
 import 'package:http/http.dart' as http;
+import 'package:snapkit/SnapchatButton.dart';
 
 class Snapkit {
   static const MethodChannel _channel = const MethodChannel('snapkit');
@@ -59,11 +60,18 @@ class Snapkit {
     return currentUser;
   }
 
-  /// verifyPhoneNumber verifies if the `phoneNumber` passed
+  /// verifyPhoneNumber verifies if the [phoneNumber] passed
   /// matches the phone number of the currently signed in
   /// user in the snapchat app. Always returns `false` on
-  /// Android. A two digit `region` code and `phoneNumber`
+  /// Android. A two character [region] code and [phoneNumber]
   /// must be passed
+  ///
+  /// [region] is a two (2) character region code eg. 'US'
+  ///
+  /// [phoneNumber] is a ten (10) character `String` containing an area code and phone number
+  ///
+  /// Throws a `PlatformException` if the phone number is incorrectly
+  /// formatted, if the user cancelled the action or if something else went wrong
   Future<bool> verifyPhoneNumber(String region, String phoneNumber) async {
     try {
       List<dynamic> resVerify =
@@ -102,7 +110,9 @@ class Snapkit {
 
   /// logout clears your apps local session and refresh tokens. You will
   /// no longer be able to make requests to fetch the `SnapchatUser` with
-  /// `currentUser`. Call `closeStream()` to close the stream and prevent a
+  /// [currentUser].
+  ///
+  /// Call [closeStream] to close the stream and prevent a
   /// resource sink.
   Future<void> logout() async {
     await _channel.invokeMethod('callLogout');
@@ -116,7 +126,8 @@ class Snapkit {
   }
 
   /// currentUser fetches an up to date `SnapchatUser` and returns it.
-  /// This will result in an error if the user was not previously logged in.
+  ///
+  /// Throws a `PlatformException` if the user wasn't previously logged in
   Future<SnapchatUser> get currentUser async {
     try {
       final List<dynamic> userDetails =
@@ -128,20 +139,30 @@ class Snapkit {
     }
   }
 
-  /// share shares Media to be sent in the Snapchat app. `mediaType`
+  /// share shares Media to be sent in the Snapchat app. [mediaType]
   /// defines what type of background media is to be shared.
-  /// `SnapchatMediaType.PHOTO` requires `image` to be non null.
-  /// `SnapchatMediaType.VIDEO` requires `videoUrl` to be non null.
-  /// `SnapchatMediaType.NONE` allows the User to take a photo or
-  /// video
   ///
-  /// `caption`, `sticker` and `attachmentUrl` are optional
-  Future<void> share(SnapchatMediaType mediaType,
-      {ImageProvider<Object>? image,
-      String? videoUrl,
-      SnapchatSticker? sticker,
-      String? caption,
-      String? attachmentUrl}) async {
+  /// `SnapchatMediaType.PHOTO` requires [image] to be non `null`.
+  ///
+  /// `SnapchatMediaType.VIDEO` requires [videoUrl] to be non `null`.
+  ///
+  /// [image] is an `ImageProvider` instance
+  ///
+  /// [videoUrl] is a `String` that contains an external url eg. https://domain.com/video.mp4/
+  ///
+  /// [SnapchatSticker] is a `SnapchatSticker` instance
+  ///
+  /// [caption] is a `String` no longer than 250 characters
+  ///
+  /// [attachmentUrl] is a `String` that contains an external url eg. https://domain.com/
+  Future<void> share(
+    SnapchatMediaType mediaType, {
+    ImageProvider<Object>? image,
+    String? videoUrl,
+    SnapchatSticker? sticker,
+    String? caption,
+    String? attachmentUrl,
+  }) async {
     assert(caption != null ? caption.length <= 250 : true);
 
     Completer<File?> c = new Completer<File?>();
@@ -186,6 +207,12 @@ class Snapkit {
     bool isInstalled;
     isInstalled = await _channel.invokeMethod('isInstalled');
     return isInstalled;
+  }
+
+  /// snapchatButton returns a `SnapchatButton` Widget that is already setup
+  /// and will start the login flow when pressed
+  SnapchatButton get snapchatButton {
+    return SnapchatButton(snapkit: this);
   }
 }
 
@@ -247,158 +274,4 @@ enum SnapchatMediaType {
 
   /// Let the User take their own Photo or Video
   NONE
-}
-
-enum SnapchatButtonColors {
-  /// Snapchat Yellow
-  YELLOW,
-
-  /// Snapchat Black
-  BLACK,
-
-  /// Snapchat White
-  WHITE,
-
-  /// Snapchat Gray
-  GRAY
-}
-
-extension SnapchatButtonExtension on SnapchatButtonColors {
-  /// Gets the Button Color value associated with ENUM
-  Color get color {
-    switch (this) {
-      case SnapchatButtonColors.YELLOW:
-        return const Color.fromRGBO(255, 252, 0, 1);
-      case SnapchatButtonColors.BLACK:
-        return const Color.fromRGBO(0, 0, 0, 1);
-      case SnapchatButtonColors.WHITE:
-        return const Color.fromRGBO(255, 255, 255, 1);
-      case SnapchatButtonColors.GRAY:
-        return const Color.fromRGBO(244, 244, 244, 1);
-    }
-  }
-
-  /// Gets the Text Color to contrast button color
-  Color get textColor {
-    switch (this) {
-      case SnapchatButtonColors.BLACK:
-        return const Color.fromRGBO(255, 255, 255, 1);
-      default:
-        return const Color.fromRGBO(0, 0, 0, 1);
-    }
-  }
-
-  /// Gets the Image to contrast button color
-  AssetImage get ghost {
-    switch (this) {
-      case SnapchatButtonColors.BLACK:
-        return AssetImage('assets/images/GhostLogoDark.png',
-            package: 'snapkit');
-      default:
-        return AssetImage('assets/images/GhostLogoLight.png',
-            package: 'snapkit');
-    }
-  }
-}
-
-class SnapchatButtonFontOptions {
-  /// Change the `Text` font size
-  final double? fontSize;
-
-  /// Change the `Text` font weight
-  final FontWeight? fontWeight;
-
-  /// Change the `Text` font family
-  final String? fontFamily;
-
-  /// Change the `Text` font family fallback(s)
-  final List<String>? fontFamilyFallback;
-
-  /// Change the `Text` font features
-  final List<FontFeature>? fontFeatures;
-
-  /// Change the `Text` font style
-  final FontStyle? fontStyle;
-
-  /// Custom Font Options
-  ///
-  /// WARNING: Changing these will mean the button no longer follows
-  /// Snapchat's Brand Guidelines
-  SnapchatButtonFontOptions({
-    this.fontSize,
-    this.fontWeight,
-    this.fontFamily,
-    this.fontFamilyFallback,
-    this.fontFeatures,
-    this.fontStyle,
-  });
-}
-
-class SnapchatButton extends StatelessWidget {
-  /// Additional Font Options to change text
-  final SnapchatButtonFontOptions? fontOptions;
-
-  /// Desired Button Color
-  final SnapchatButtonColors buttonColor;
-
-  /// Snapkit Object used by button to Login
-  final Snapkit snapkit;
-
-  /// Creates a new `SnapchatButton` that by default conforms to
-  /// Snapchat's Brand Guidelines
-  const SnapchatButton({
-    Key? key,
-    required this.snapkit,
-    this.buttonColor = SnapchatButtonColors.YELLOW,
-    this.fontOptions,
-  }) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return TextButtonTheme(
-      data: TextButtonThemeData(
-          style: ButtonStyle(
-              shape: MaterialStateProperty.resolveWith<OutlinedBorder>(
-                (states) => RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(8.0),
-                ),
-              ),
-              backgroundColor: MaterialStateProperty.resolveWith<Color?>(
-                  (states) => buttonColor.color),
-              padding: MaterialStateProperty.resolveWith<EdgeInsetsGeometry>(
-                  (states) => EdgeInsets.only(
-                      left: 22, top: 20, right: 22, bottom: 20)))),
-      child: TextButton(
-        onPressed: () => this.snapkit.login(),
-        style: ButtonStyle(
-            padding: MaterialStateProperty.resolveWith<EdgeInsets>(
-                (states) => EdgeInsets.all(16.0))),
-        child: Row(
-          children: [
-            Container(
-              padding: EdgeInsets.only(right: 16.0),
-              child: Image(
-                image: buttonColor.ghost,
-                fit: BoxFit.contain,
-                height: 32.0,
-                width: 32.0,
-              ),
-            ),
-            Text(
-              "Login with Snapchat",
-              style: TextStyle(
-                color: this.buttonColor.textColor,
-                fontFamily: this.fontOptions?.fontFamily,
-                fontFamilyFallback: this.fontOptions?.fontFamilyFallback,
-                fontFeatures: this.fontOptions?.fontFeatures,
-                fontSize: this.fontOptions?.fontSize,
-                fontStyle: this.fontOptions?.fontStyle,
-                fontWeight: this.fontOptions?.fontWeight,
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
 }
