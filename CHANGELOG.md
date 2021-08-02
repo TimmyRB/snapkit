@@ -27,3 +27,8 @@
 ## 1.2.0
 
 * Added Phone Number verification through Snapchat
+
+## 1.2.1
+
+* Improved package classes & methods documentation
+* Moved SnapchatButton to it's own file
