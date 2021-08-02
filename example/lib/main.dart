@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'dart:async';
 
@@ -186,13 +188,17 @@ class _MyAppState
         ),
         floatingActionButton: FloatingActionButton(
           onPressed: () {
-            _snapkit.share(SnapchatMediaType.PHOTO,
-                image: NetworkImage(
-                    'https://picsum.photos/${(this.context.size!.width.round())}/${this.context.size!.height.round()}.jpg'),
-                sticker: SnapchatSticker(
-                    image: Image.asset('images/icon-256x256.png').image),
-                caption: 'Snapkit Example Caption!',
-                attachmentUrl: 'https://JacobBrasil.com/');
+            // _snapkit.share(SnapchatMediaType.PHOTO,
+            //     image: NetworkImage(
+            //         'https://picsum.photos/${(this.context.size!.width.round())}/${this.context.size!.height.round()}.jpg'),
+            //     sticker: SnapchatSticker(
+            //         image: Image.asset('assets/images/icon-256x256.png').image),
+            //     caption: 'Snapkit Example Caption!',
+            //     attachmentUrl: 'https://JacobBrasil.com/');
+            _snapkit.share(
+              SnapchatMediaType.VIDEO,
+              videoPath: 'assets/videos/ForBiggerBlazes.mp4',
+            );
           },
           child: Icon(Icons.camera),
         ),
