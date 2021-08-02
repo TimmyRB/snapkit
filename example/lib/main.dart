@@ -132,9 +132,7 @@ class _MyAppState
               if (_snapchatUser == null)
                 Container(
                   padding: EdgeInsets.only(left: 8.0, right: 8.0),
-                  child: SnapchatButton(
-                    snapkit: _snapkit,
-                  ),
+                  child: _snapkit.snapchatButton,
                 ),
               if (_snapchatUser != null)
                 TextButton(
