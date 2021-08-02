@@ -32,3 +32,5 @@
 
 * Improved package classes & methods documentation
 * Moved SnapchatButton to it's own file
+
+## 1.2.2
