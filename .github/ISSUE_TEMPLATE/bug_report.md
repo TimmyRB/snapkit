@@ -1,6 +1,6 @@
 ---
 name: Project Help
-about: Select this if you have a bug to report or are encountering an error
+about: Select this if you have a bug to report or are encountering an error. MAKE SURE YOU HAVE FOLLOWED THE WIKI FIRST
 title: ''
 labels: ''
 assignees: ''
