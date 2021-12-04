@@ -11,12 +11,15 @@ import com.snapchat.kit.sdk.core.controller.LoginStateController.OnLoginStateCha
 import com.snapchat.kit.sdk.creative.api.SnapCreativeKitApi;
 import com.snapchat.kit.sdk.creative.exceptions.SnapMediaSizeException;
 import com.snapchat.kit.sdk.creative.exceptions.SnapStickerSizeException;
+import com.snapchat.kit.sdk.creative.exceptions.SnapVideoLengthException;
 import com.snapchat.kit.sdk.creative.media.SnapMediaFactory;
 import com.snapchat.kit.sdk.creative.media.SnapPhotoFile;
 import com.snapchat.kit.sdk.creative.media.SnapSticker;
+import com.snapchat.kit.sdk.creative.media.SnapVideoFile;
 import com.snapchat.kit.sdk.creative.models.SnapContent;
 import com.snapchat.kit.sdk.creative.models.SnapLiveCameraContent;
 import com.snapchat.kit.sdk.creative.models.SnapPhotoContent;
+import com.snapchat.kit.sdk.creative.models.SnapVideoContent;
 import com.snapchat.kit.sdk.login.models.MeData;
 import com.snapchat.kit.sdk.login.models.UserDataResponse;
 import com.snapchat.kit.sdk.login.networking.FetchUserDataCallback;
@@ -115,8 +118,19 @@ public class SnapkitPlugin implements FlutterPlugin, MethodCallHandler, Activity
                         }
 
                         break;
-//                    case "VIDEO":
-//                        break;
+                    case "VIDEO":
+                        try {
+                            SnapVideoFile videoFile = this.mediaFactory.getSnapVideoFromFile(new File((String) call.argument("videoPath")));
+                            content = new SnapVideoContent(videoFile);
+                        } catch (SnapMediaSizeException | SnapVideoLengthException e) {
+                            result.error("SendMediaError", "Could not create SnapVideoFile", e);
+                            return;
+                        } catch (NullPointerException e) {
+                            result.error("SendMediaError", "Could not find Video file", e);
+                            return;
+                        }
+
+                        break;
                     default:
                         content = new SnapLiveCameraContent();
                         break;
@@ -125,18 +139,20 @@ public class SnapkitPlugin implements FlutterPlugin, MethodCallHandler, Activity
                 content.setCaptionText((String)call.argument("caption"));
                 content.setAttachmentUrl((String)call.argument("attachmentUrl"));
 
-                try {
-                    File file = new File((String) ((Map<String, Object>)call.argument("sticker")).get("imagePath"));
-                    SnapSticker sticker = this.mediaFactory.getSnapStickerFromFile(file);
-                    sticker.setPosX(0.5f);
-                    sticker.setPosY(0.5f);
-                    content.setSnapSticker(sticker);
-                } catch (SnapStickerSizeException e) {
-                    result.error("SendMediaError", "Could not create SnapSticker", e);
-                    return;
-                } catch (NullPointerException e) {
-                    result.error("SendMediaError", "Could not find Sticker file", e);
-                    return;
+                if (call.argument("sticker") != null) {
+                    try {
+                        File file = new File((String) ((Map<String, Object>) call.argument("sticker")).get("imagePath"));
+                        SnapSticker sticker = this.mediaFactory.getSnapStickerFromFile(file);
+                        sticker.setPosX(0.5f);
+                        sticker.setPosY(0.5f);
+                        content.setSnapSticker(sticker);
+                    } catch (SnapStickerSizeException e) {
+                        result.error("SendMediaError", "Could not create SnapSticker", e);
+                        return;
+                    } catch (NullPointerException e) {
+                        result.error("SendMediaError", "Could not find Sticker file", e);
+                        return;
+                    }
                 }
 
                 this.creativeKitApi.send(content);

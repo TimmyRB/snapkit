@@ -76,7 +76,7 @@ public class SwiftSnapkitPlugin: NSObject, FlutterPlugin {
             
             let mediaType = args["mediaType"] as? String
             let imagePath = args["imagePath"] as? String
-            let videoUrl = args["videoUrl"] as? String
+            let videoPath = args["videoPath"] as? String
             
             var content: SCSDKSnapContent?
             
@@ -94,7 +94,14 @@ public class SwiftSnapkitPlugin: NSObject, FlutterPlugin {
                 let photo = SCSDKSnapPhoto(image: uiImage)
                 content = SCSDKPhotoSnapContent(snapPhoto: photo)
             case "VIDEO":
-                let video = SCSDKSnapVideo(videoUrl: URL(string: videoUrl!)!)
+                let fileUrl = URL(fileURLWithPath: videoPath!, isDirectory: false)
+                if (!FileManager.default.fileExists(atPath: fileUrl.path)) {
+                    result(FlutterError(code: "SendMediaArgsError", message: "Video could not be found in filesystem", details: fileUrl.path))
+                }
+                
+                print(fileUrl.path)
+                
+                let video = SCSDKSnapVideo(videoUrl: fileUrl)
                 content = SCSDKVideoSnapContent(snapVideo: video)
             default:
                 content = SCSDKNoSnapContent()

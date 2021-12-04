@@ -158,14 +158,15 @@ class Snapkit {
   Future<void> share(
     SnapchatMediaType mediaType, {
     ImageProvider<Object>? image,
-    String? videoUrl,
+    String? videoPath,
     SnapchatSticker? sticker,
     String? caption,
     String? attachmentUrl,
   }) async {
     assert(caption != null ? caption.length <= 250 : true);
 
-    Completer<File?> c = new Completer<File?>();
+    Completer<File?> imageCompleter = new Completer<File?>();
+    Completer<File?> videoCompleter = new Completer<File?>();
 
     if (mediaType == SnapchatMediaType.PHOTO) {
       assert(image != null);
@@ -180,21 +181,34 @@ class Snapkit {
         File file = await new File('$path/image.png').writeAsBytes(
             buffer.asUint8List(byteData.offsetInBytes, byteData.lengthInBytes));
 
-        c.complete(file);
+        imageCompleter.complete(file);
       }));
     } else {
-      c.complete(null);
+      imageCompleter.complete(null);
     }
 
-    if (mediaType == SnapchatMediaType.VIDEO) assert(videoUrl != null);
+    if (mediaType == SnapchatMediaType.VIDEO) {
+      assert(videoPath != null);
+      String path = (await getTemporaryDirectory()).path;
+      ByteData byteData = await rootBundle.load(videoPath!);
+      ByteBuffer buffer = byteData.buffer;
 
-    File? imageFile = await c.future;
+      File file = await new File('$path/video.mp4').writeAsBytes(
+          buffer.asUint8List(byteData.offsetInBytes, byteData.lengthInBytes));
+
+      videoCompleter.complete(file);
+    } else {
+      videoCompleter.complete(null);
+    }
+
+    File? imageFile = await imageCompleter.future;
+    File? videoFile = await videoCompleter.future;
 
     await _channel.invokeMethod('sendMedia', <String, dynamic>{
       'mediaType':
           mediaType.toString().substring(mediaType.toString().indexOf('.') + 1),
       'imagePath': imageFile?.path,
-      'videoUrl': videoUrl,
+      'videoPath': videoFile?.path,
       'sticker': sticker != null ? await sticker.toMap() : null,
       'caption': caption,
       'attachmentUrl': attachmentUrl
