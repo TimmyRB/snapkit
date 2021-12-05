@@ -132,8 +132,15 @@ class Snapkit {
     try {
       final List<dynamic> userDetails =
           (await _channel.invokeMethod('getUser')) as List<dynamic>;
-      return new SnapchatUser(userDetails[0] as String,
-          userDetails[1] as String, userDetails[2] as String);
+      dynamic details2 = userDetails[2];
+      String? bitmojiUrl;
+      if (details2.runtimeType == Null || details2 == null) {
+        bitmojiUrl = null;
+      } else {
+        bitmojiUrl = details2 as String;
+      }
+      return new SnapchatUser(
+          userDetails[0] as String, userDetails[1] as String, bitmojiUrl);
     } on PlatformException catch (e) {
       throw e;
     }
@@ -238,7 +245,7 @@ class SnapchatUser {
   final String displayName;
 
   /// An automatic updating static URL to a Snapchat user's Bitmoji
-  final String bitmojiUrl;
+  final String? bitmojiUrl;
 
   /// Creates a new `SnapchatUser`
   SnapchatUser(this.externalId, this.displayName, this.bitmojiUrl);

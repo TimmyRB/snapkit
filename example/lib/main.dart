@@ -124,7 +124,8 @@ class _MyAppState
                     margin: EdgeInsets.all(15),
                     child: CircleAvatar(
                       backgroundColor: Colors.lightBlue,
-                      foregroundImage: NetworkImage(_snapchatUser!.bitmojiUrl),
+                      foregroundImage: NetworkImage(_snapchatUser!.bitmojiUrl ??
+                          "https://st.depositphotos.com/1052233/2885/v/600/depositphotos_28850541-stock-illustration-male-default-profile-picture.jpg"),
                     )),
               if (_snapchatUser != null) Text(_snapchatUser!.displayName),
               if (_snapchatUser != null)
