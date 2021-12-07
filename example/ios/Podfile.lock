@@ -12,23 +12,23 @@ PODS:
   - PINOperation (1.2.1)
   - snapkit (1.0.0):
     - Flutter
-    - SnapSDK (= 1.11.0)
-  - SnapSDK (1.11.0):
-    - SnapSDK/SCSDKBitmojiKit (= 1.11.0)
-    - SnapSDK/SCSDKCoreKit (= 1.11.0)
-    - SnapSDK/SCSDKCreativeKit (= 1.11.0)
-    - SnapSDK/SCSDKLoginKit (= 1.11.0)
-    - SnapSDK/SCSDKStoryKit (= 1.11.0)
-  - SnapSDK/SCSDKBitmojiKit (1.11.0):
+    - SnapSDK (= 1.13.0)
+  - SnapSDK (1.13.0):
+    - SnapSDK/SCSDKBitmojiKit (= 1.13.0)
+    - SnapSDK/SCSDKCoreKit (= 1.13.0)
+    - SnapSDK/SCSDKCreativeKit (= 1.13.0)
+    - SnapSDK/SCSDKLoginKit (= 1.13.0)
+    - SnapSDK/SCSDKStoryKit (= 1.13.0)
+  - SnapSDK/SCSDKBitmojiKit (1.13.0):
     - PINCache (< 3.1, >= 2.3)
     - PINOperation (~> 1.2.1)
     - SnapSDK/SCSDKCoreKit
-  - SnapSDK/SCSDKCoreKit (1.11.0)
-  - SnapSDK/SCSDKCreativeKit (1.11.0):
+  - SnapSDK/SCSDKCoreKit (1.13.0)
+  - SnapSDK/SCSDKCreativeKit (1.13.0):
     - SnapSDK/SCSDKCoreKit
-  - SnapSDK/SCSDKLoginKit (1.11.0):
+  - SnapSDK/SCSDKLoginKit (1.13.0):
     - SnapSDK/SCSDKCoreKit
-  - SnapSDK/SCSDKStoryKit (1.11.0):
+  - SnapSDK/SCSDKStoryKit (1.13.0):
     - SnapSDK/SCSDKCoreKit
 
 DEPENDENCIES:
@@ -55,8 +55,8 @@ SPEC CHECKSUMS:
   path_provider: abfe2b5c733d04e238b0d8691db0cfd63a27a93c
   PINCache: 7a8fc1a691173d21dbddbf86cd515de6efa55086
   PINOperation: 00c935935f1e8cf0d1e2d6b542e75b88fc3e5e20
-  snapkit: 98ea41e974cf6b3617c2de29844a6da01d9e3df8
-  SnapSDK: ae3dc769d22ee7b92447729481c7c08c1b231acd
+  snapkit: 0672da9ffabf4cf1302b91f139a39c24de8ca098
+  SnapSDK: f4f7cf3b2261233e096f8c43706d94e785ca102c
 
 PODFILE CHECKSUM: c4e6d8d43d327a11f43721f10ec79e72338d35df
 

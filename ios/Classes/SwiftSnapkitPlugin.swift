@@ -99,8 +99,6 @@ public class SwiftSnapkitPlugin: NSObject, FlutterPlugin {
                     result(FlutterError(code: "SendMediaArgsError", message: "Video could not be found in filesystem", details: fileUrl.path))
                 }
                 
-                print(fileUrl.path)
-                
                 let video = SCSDKSnapVideo(videoUrl: fileUrl)
                 content = SCSDKVideoSnapContent(snapVideo: video)
             default:

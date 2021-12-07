@@ -198,7 +198,7 @@ class _MyAppState
             //     attachmentUrl: 'https://JacobBrasil.com/');
             _snapkit.share(
               SnapchatMediaType.VIDEO,
-              videoPath: 'assets/videos/TestVideo.mp4',
+              videoPath: 'assets/videos/Traffic.mp4',
             );
           },
           child: Icon(Icons.camera),
