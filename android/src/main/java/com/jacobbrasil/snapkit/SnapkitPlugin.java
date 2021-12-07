@@ -141,7 +141,6 @@ public class SnapkitPlugin implements FlutterPlugin, MethodCallHandler, Activity
 
                 if (call.argument("sticker") != null) {
                     try {
-                        @SuppressWarnings("unchecked")
                         File file = new File((String) ((Map<String, Object>) call.argument("sticker")).get("imagePath"));
                         SnapSticker sticker = this.mediaFactory.getSnapStickerFromFile(file);
                         sticker.setPosX(0.5f);
