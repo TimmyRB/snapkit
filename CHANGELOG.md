@@ -34,3 +34,14 @@
 * Moved SnapchatButton to it's own file
 
 ## 1.2.2
+
+* Bug fixes
+
+## 2.0.0
+
+* Fixed Stickers not appearing on Android clients
+* Added additional options to Stickers for fine tuning
+* Fixed an issue where a user not sharing their Bitmoji would cause an exception
+* Fixed Videos not working on Android Clients
+* Fixed an issue where some Videos wouldn't work despite meeting Snapchat's Video requirements
+* Bug fixes & Code improvements
