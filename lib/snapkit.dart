@@ -255,8 +255,22 @@ class SnapchatSticker {
   /// Url to the Image to be used as a Sticker
   ImageProvider<Object> image;
 
+  /// Size of the Sticker relative to the screen
+  Size size;
+
+  /// Offset of the Sticker from the top left of the screen
+  StickerOffset offset;
+
+  /// Rotation of the Sticker in degrees Clockwise
+  StickerRotation rotation;
+
   /// Creates a new `SnapchatSticker`
-  SnapchatSticker({required this.image});
+  SnapchatSticker({
+    required this.image,
+    required this.size,
+    this.offset = const StickerOffset(0.5, 0.5),
+    this.rotation = const StickerRotation(0),
+  });
 
   Future<Map<String, dynamic>> toMap() async {
     Completer<Map<String, dynamic>> c = new Completer<Map<String, dynamic>>();
@@ -274,10 +288,51 @@ class SnapchatSticker {
 
       c.complete(<String, dynamic>{
         'imagePath': file.path,
+        'width': size.width,
+        'height': size.height,
+        'offsetX': offset.horizontal,
+        'offsetY': offset.vertical,
+        'rotation': rotation.rotation,
       });
     }));
 
     return c.future;
+  }
+}
+
+class StickerOffset {
+  /// Value between 0.0 and 1.0
+  ///
+  /// Offset from the left of the screen
+  final double horizontal;
+
+  /// Value between 0.0 and 1.0
+  ///
+  /// Offset from the top of the screen
+  final double vertical;
+
+  const StickerOffset(this.horizontal, this.vertical)
+      : assert((horizontal >= 0 && horizontal <= 1) &&
+            (vertical >= 0 && vertical <= 1));
+}
+
+class StickerRotation {
+  /// Rotation of the Sticker
+  final double _rotation;
+
+  /// Direction of the [rotation] value
+  final RotationDirection direction;
+
+  const StickerRotation(
+    this._rotation, {
+    this.direction = RotationDirection.CLOCKWISE,
+  });
+
+  double get rotation {
+    if (this.direction == RotationDirection.COUNTER_CLOCKWISE)
+      return 360 - this._rotation;
+    else
+      return this._rotation;
   }
 }
 
@@ -296,3 +351,5 @@ enum SnapchatMediaType {
   /// Let the User take their own Photo or Video
   NONE
 }
+
+enum RotationDirection { CLOCKWISE, COUNTER_CLOCKWISE }

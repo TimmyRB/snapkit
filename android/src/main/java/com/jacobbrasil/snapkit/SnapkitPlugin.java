@@ -64,7 +64,7 @@ public class SnapkitPlugin implements FlutterPlugin, MethodCallHandler, Activity
             case "callLogin":
                 SnapLogin.getLoginStateController(_activity).addOnLoginStateChangedListener(this);
                 SnapLogin.getAuthTokenManager(_activity).startTokenGrant();
-                this._result = result;
+                _result = result;
                 break;
             case "getUser":
                 String query = "{me{externalId, displayName, bitmoji{selfie}}}";
@@ -100,14 +100,14 @@ public class SnapkitPlugin implements FlutterPlugin, MethodCallHandler, Activity
                 });
                 break;
             case "sendMedia":
-                if (this.creativeKitApi == null) this.creativeKitApi = SnapCreative.getApi(_activity);
-                if (this.mediaFactory == null) this.mediaFactory = SnapCreative.getMediaFactory(_activity);
+                if (creativeKitApi == null) creativeKitApi = SnapCreative.getApi(_activity);
+                if (mediaFactory == null) mediaFactory = SnapCreative.getMediaFactory(_activity);
 
                 SnapContent content;
                 switch ((String)call.argument("mediaType")) {
                     case "PHOTO":
                         try {
-                            SnapPhotoFile photoFile = this.mediaFactory.getSnapPhotoFromFile(new File((String) call.argument("imagePath")));
+                            SnapPhotoFile photoFile = mediaFactory.getSnapPhotoFromFile(new File((String) call.argument("imagePath")));
                             content = new SnapPhotoContent(photoFile);
                         } catch (SnapMediaSizeException e) {
                             result.error("SendMediaError", "Could not create SnapPhotoFile", e);
@@ -120,7 +120,7 @@ public class SnapkitPlugin implements FlutterPlugin, MethodCallHandler, Activity
                         break;
                     case "VIDEO":
                         try {
-                            SnapVideoFile videoFile = this.mediaFactory.getSnapVideoFromFile(new File((String) call.argument("videoPath")));
+                            SnapVideoFile videoFile = mediaFactory.getSnapVideoFromFile(new File((String) call.argument("videoPath")));
                             content = new SnapVideoContent(videoFile);
                         } catch (SnapMediaSizeException | SnapVideoLengthException e) {
                             result.error("SendMediaError", "Could not create SnapVideoFile", e);
@@ -140,12 +140,10 @@ public class SnapkitPlugin implements FlutterPlugin, MethodCallHandler, Activity
                 content.setAttachmentUrl((String)call.argument("attachmentUrl"));
 
                 if (call.argument("sticker") != null) {
+                    Map<String, Object> stickerMap = (Map<String, Object>) call.argument("sticker");
+                    SnapSticker sticker = null;
                     try {
-                        File file = new File((String) ((Map<String, Object>) call.argument("sticker")).get("imagePath"));
-                        SnapSticker sticker = this.mediaFactory.getSnapStickerFromFile(file);
-                        sticker.setPosX(0.5f);
-                        sticker.setPosY(0.5f);
-                        content.setSnapSticker(sticker);
+                        sticker = mediaFactory.getSnapStickerFromFile(new File((String) stickerMap.get("imagePath")));
                     } catch (SnapStickerSizeException e) {
                         result.error("SendMediaError", "Could not create SnapSticker", e);
                         return;
@@ -153,9 +151,21 @@ public class SnapkitPlugin implements FlutterPlugin, MethodCallHandler, Activity
                         result.error("SendMediaError", "Could not find Sticker file", e);
                         return;
                     }
+
+                    if (sticker != null) {
+                        sticker.setWidthDp(Float.parseFloat(stickerMap.get("width").toString()));
+                        sticker.setHeightDp(Float.parseFloat(stickerMap.get("height").toString()));
+
+                        sticker.setPosX(Float.parseFloat(stickerMap.get("offsetX").toString()));
+                        sticker.setPosY(Float.parseFloat(stickerMap.get("offsetY").toString()));
+
+                        sticker.setRotationDegreesClockwise(Float.parseFloat(stickerMap.get("rotation").toString()));
+
+                        content.setSnapSticker(sticker);
+                    }
                 }
 
-                this.creativeKitApi.send(content);
+                creativeKitApi.send(content);
                 break;
             case "verifyNumber":
                 List<String> res = new ArrayList<String>();
@@ -165,7 +175,7 @@ public class SnapkitPlugin implements FlutterPlugin, MethodCallHandler, Activity
                 break;
             case "callLogout":
                 SnapLogin.getAuthTokenManager(_activity).clearToken();
-                this._result = result;
+                _result = result;
                 break;
             case "isInstalled":
                 result.success(SnapUtils.isSnapchatInstalled(_activity.getPackageManager(), "com.snapchat.android"));
@@ -181,17 +191,17 @@ public class SnapkitPlugin implements FlutterPlugin, MethodCallHandler, Activity
 
     @Override
     public void onLoginSucceeded() {
-        this._result.success("Login Success");
+        _result.success("Login Success");
     }
 
     @Override
     public void onLoginFailed() {
-        this._result.error("LoginError", "Error Logging In", null);
+        _result.error("LoginError", "Error Logging In", null);
     }
 
     @Override
     public void onLogout() {
-        this._result.success("Logout Success");
+        _result.success("Logout Success");
     }
 
     @Override

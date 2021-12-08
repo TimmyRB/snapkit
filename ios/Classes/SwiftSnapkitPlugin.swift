@@ -126,6 +126,11 @@ public class SwiftSnapkitPlugin: NSObject, FlutterPlugin {
                 }
                 
                 let snapSticker = SCSDKSnapSticker(stickerImage: uiImage)
+                snapSticker.width = sticker["width"] as! CGFloat
+                snapSticker.height = sticker["height"] as! CGFloat
+                snapSticker.posX = sticker["offsetX"] as! CGFloat
+                snapSticker.posY = sticker["offsetY"] as! CGFloat
+                snapSticker.rotation = sticker["rotation"] as! CGFloat
                 
                 content?.sticker = snapSticker
             }
