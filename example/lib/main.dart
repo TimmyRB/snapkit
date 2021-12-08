@@ -122,7 +122,8 @@ class _MyAppState
                     margin: EdgeInsets.all(15),
                     child: CircleAvatar(
                       backgroundColor: Colors.lightBlue,
-                      foregroundImage: NetworkImage(_snapchatUser!.bitmojiUrl),
+                      foregroundImage: NetworkImage(_snapchatUser!.bitmojiUrl ??
+                          "https://st.depositphotos.com/1052233/2885/v/600/depositphotos_28850541-stock-illustration-male-default-profile-picture.jpg"),
                     )),
               if (_snapchatUser != null) Text(_snapchatUser!.displayName),
               if (_snapchatUser != null)
@@ -190,9 +191,20 @@ class _MyAppState
                 image: NetworkImage(
                     'https://picsum.photos/${(this.context.size!.width.round())}/${this.context.size!.height.round()}.jpg'),
                 sticker: SnapchatSticker(
-                    image: Image.asset('images/icon-256x256.png').image),
+                  image: Image.asset('assets/images/icon-256x256.png').image,
+                  size: Size(128, 128),
+                  offset: StickerOffset(0.45, 0.45),
+                  rotation: StickerRotation(
+                    15,
+                    direction: RotationDirection.COUNTER_CLOCKWISE,
+                  ),
+                ),
                 caption: 'Snapkit Example Caption!',
                 attachmentUrl: 'https://JacobBrasil.com/');
+            // _snapkit.share(
+            //   SnapchatMediaType.VIDEO,
+            //   videoPath: 'assets/videos/TestVideo.mp4',
+            // );
           },
           child: Icon(Icons.camera),
         ),

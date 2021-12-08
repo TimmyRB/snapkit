@@ -132,8 +132,15 @@ class Snapkit {
     try {
       final List<dynamic> userDetails =
           (await _channel.invokeMethod('getUser')) as List<dynamic>;
-      return new SnapchatUser(userDetails[0] as String,
-          userDetails[1] as String, userDetails[2] as String);
+      dynamic details2 = userDetails[2];
+      String? bitmojiUrl;
+      if (details2.runtimeType == Null || details2 == null) {
+        bitmojiUrl = null;
+      } else {
+        bitmojiUrl = details2 as String;
+      }
+      return new SnapchatUser(
+          userDetails[0] as String, userDetails[1] as String, bitmojiUrl);
     } on PlatformException catch (e) {
       throw e;
     }
@@ -158,14 +165,15 @@ class Snapkit {
   Future<void> share(
     SnapchatMediaType mediaType, {
     ImageProvider<Object>? image,
-    String? videoUrl,
+    String? videoPath,
     SnapchatSticker? sticker,
     String? caption,
     String? attachmentUrl,
   }) async {
     assert(caption != null ? caption.length <= 250 : true);
 
-    Completer<File?> c = new Completer<File?>();
+    Completer<File?> imageCompleter = new Completer<File?>();
+    Completer<File?> videoCompleter = new Completer<File?>();
 
     if (mediaType == SnapchatMediaType.PHOTO) {
       assert(image != null);
@@ -180,21 +188,34 @@ class Snapkit {
         File file = await new File('$path/image.png').writeAsBytes(
             buffer.asUint8List(byteData.offsetInBytes, byteData.lengthInBytes));
 
-        c.complete(file);
+        imageCompleter.complete(file);
       }));
     } else {
-      c.complete(null);
+      imageCompleter.complete(null);
     }
 
-    if (mediaType == SnapchatMediaType.VIDEO) assert(videoUrl != null);
+    if (mediaType == SnapchatMediaType.VIDEO) {
+      assert(videoPath != null);
+      String path = (await getTemporaryDirectory()).path;
+      ByteData byteData = await rootBundle.load(videoPath!);
+      ByteBuffer buffer = byteData.buffer;
 
-    File? imageFile = await c.future;
+      File file = await new File('$path/video.mp4').writeAsBytes(
+          buffer.asUint8List(byteData.offsetInBytes, byteData.lengthInBytes));
+
+      videoCompleter.complete(file);
+    } else {
+      videoCompleter.complete(null);
+    }
+
+    File? imageFile = await imageCompleter.future;
+    File? videoFile = await videoCompleter.future;
 
     await _channel.invokeMethod('sendMedia', <String, dynamic>{
       'mediaType':
           mediaType.toString().substring(mediaType.toString().indexOf('.') + 1),
       'imagePath': imageFile?.path,
-      'videoUrl': videoUrl,
+      'videoPath': videoFile?.path,
       'sticker': sticker != null ? await sticker.toMap() : null,
       'caption': caption,
       'attachmentUrl': attachmentUrl
@@ -224,7 +245,7 @@ class SnapchatUser {
   final String displayName;
 
   /// An automatic updating static URL to a Snapchat user's Bitmoji
-  final String bitmojiUrl;
+  final String? bitmojiUrl;
 
   /// Creates a new `SnapchatUser`
   SnapchatUser(this.externalId, this.displayName, this.bitmojiUrl);
@@ -234,8 +255,22 @@ class SnapchatSticker {
   /// Url to the Image to be used as a Sticker
   ImageProvider<Object> image;
 
+  /// Size of the Sticker relative to the screen
+  Size size;
+
+  /// Offset of the Sticker from the top left of the screen
+  StickerOffset offset;
+
+  /// Rotation of the Sticker in degrees Clockwise
+  StickerRotation rotation;
+
   /// Creates a new `SnapchatSticker`
-  SnapchatSticker({required this.image});
+  SnapchatSticker({
+    required this.image,
+    required this.size,
+    this.offset = const StickerOffset(0.5, 0.5),
+    this.rotation = const StickerRotation(0),
+  });
 
   Future<Map<String, dynamic>> toMap() async {
     Completer<Map<String, dynamic>> c = new Completer<Map<String, dynamic>>();
@@ -253,10 +288,51 @@ class SnapchatSticker {
 
       c.complete(<String, dynamic>{
         'imagePath': file.path,
+        'width': size.width,
+        'height': size.height,
+        'offsetX': offset.horizontal,
+        'offsetY': offset.vertical,
+        'rotation': rotation.rotation,
       });
     }));
 
     return c.future;
+  }
+}
+
+class StickerOffset {
+  /// Value between 0.0 and 1.0
+  ///
+  /// Offset from the left of the screen
+  final double horizontal;
+
+  /// Value between 0.0 and 1.0
+  ///
+  /// Offset from the top of the screen
+  final double vertical;
+
+  const StickerOffset(this.horizontal, this.vertical)
+      : assert((horizontal >= 0 && horizontal <= 1) &&
+            (vertical >= 0 && vertical <= 1));
+}
+
+class StickerRotation {
+  /// Rotation of the Sticker
+  final double _rotation;
+
+  /// Direction of the [rotation] value
+  final RotationDirection direction;
+
+  const StickerRotation(
+    this._rotation, {
+    this.direction = RotationDirection.CLOCKWISE,
+  });
+
+  double get rotation {
+    if (this.direction == RotationDirection.COUNTER_CLOCKWISE)
+      return 360 - this._rotation;
+    else
+      return this._rotation;
   }
 }
 
@@ -275,3 +351,5 @@ enum SnapchatMediaType {
   /// Let the User take their own Photo or Video
   NONE
 }
+
+enum RotationDirection { CLOCKWISE, COUNTER_CLOCKWISE }
