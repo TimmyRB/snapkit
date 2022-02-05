@@ -16,7 +16,8 @@ public class SwiftSnapkitPlugin: NSObject, FlutterPlugin {
     }
     
     var _snapApi: SCSDKSnapAPI?
-    
+    var bitmojiResult : FlutterResult!
+
     public func handle(_ call: FlutterMethodCall, result: @escaping FlutterResult) {
         switch call.method {
         case "callLogin":
@@ -53,6 +54,13 @@ public class SwiftSnapkitPlugin: NSObject, FlutterPlugin {
                     result(FlutterError(code: "UnknownGetUserError", message: "Unknown", details: nil))
                 }
             })
+         case "selectBitmoji":
+                    
+                    bitmojiResult = result
+                    let stickerPickerVC = SCSDKBitmojiStickerPickerViewController()
+                    stickerPickerVC.delegate = self
+                    (UIApplication.shared.keyWindow?.rootViewController)!.present(stickerPickerVC, animated: true, completion: nil)
+                    break
         case "callLogout":
             SCSDKLoginClient.clearToken()
             result("Logout Success")
@@ -153,5 +161,12 @@ public class SwiftSnapkitPlugin: NSObject, FlutterPlugin {
         default:
             result(FlutterMethodNotImplemented)
         }
+    }
+}
+extension SwiftSnapkitPlugin : SCSDKBitmojiStickerPickerViewControllerDelegate{
+    public func bitmojiStickerPickerViewController(_ stickerPickerViewController: SCSDKBitmojiStickerPickerViewController, didSelectBitmojiWithURL bitmojiURL: String, image: UIImage?) {
+        stickerPickerViewController.dismiss(animated: true, completion: nil)
+        bitmojiResult(bitmojiURL)
+              
     }
 }
