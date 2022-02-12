@@ -5,28 +5,29 @@ import android.os.Build
 import io.flutter.embedding.engine.plugins.FlutterPlugin
 import io.flutter.plugin.common.MethodChannel.MethodCallHandler
 import io.flutter.embedding.engine.plugins.activity.ActivityAware
-import com.snapchat.kit.sdk.core.controller.LoginStateController.OnLoginStateChangedListener
 import io.flutter.plugin.common.MethodChannel
-import com.snapchat.kit.sdk.creative.api.SnapCreativeKitApi
-import com.snapchat.kit.sdk.creative.media.SnapMediaFactory
 import io.flutter.embedding.engine.plugins.FlutterPlugin.FlutterPluginBinding
 import io.flutter.plugin.common.MethodCall
-import com.snapchat.kit.sdk.SnapLogin
-import com.snapchat.kit.sdk.login.networking.FetchUserDataCallback
-import com.snapchat.kit.sdk.login.models.UserDataResponse
-import com.snapchat.kit.sdk.login.models.MeData
 import com.snapchat.kit.sdk.SnapCreative
-import com.snapchat.kit.sdk.creative.models.SnapContent
-import com.snapchat.kit.sdk.creative.media.SnapPhotoFile
-import com.snapchat.kit.sdk.creative.models.SnapPhotoContent
+import com.snapchat.kit.sdk.SnapLogin
+import com.snapchat.kit.sdk.core.controller.LoginStateController
+import com.snapchat.kit.sdk.creative.api.SnapCreativeKitApi
 import com.snapchat.kit.sdk.creative.exceptions.SnapMediaSizeException
-import com.snapchat.kit.sdk.creative.media.SnapVideoFile
-import com.snapchat.kit.sdk.creative.models.SnapVideoContent
-import com.snapchat.kit.sdk.creative.exceptions.SnapVideoLengthException
-import com.snapchat.kit.sdk.creative.models.SnapLiveCameraContent
-import com.snapchat.kit.sdk.creative.media.SnapSticker
 import com.snapchat.kit.sdk.creative.exceptions.SnapStickerSizeException
+import com.snapchat.kit.sdk.creative.exceptions.SnapVideoLengthException
+import com.snapchat.kit.sdk.creative.media.SnapMediaFactory
+import com.snapchat.kit.sdk.creative.media.SnapSticker
+import com.snapchat.kit.sdk.creative.models.SnapContent
+import com.snapchat.kit.sdk.creative.models.SnapLiveCameraContent
+import com.snapchat.kit.sdk.creative.models.SnapPhotoContent
+import com.snapchat.kit.sdk.creative.models.SnapVideoContent
+import com.snapchat.kit.sdk.login.api.UserDataQuery
+import com.snapchat.kit.sdk.login.api.BitmojiQuery
+import com.snapchat.kit.sdk.login.api.UserDataResultCallback
+import com.snapchat.kit.sdk.login.api.models.UserDataResult
+import com.snapchat.kit.sdk.login.api.UserDataResultError
 import com.snapchat.kit.sdk.util.SnapUtils
+import io.flutter.Log
 import io.flutter.embedding.engine.plugins.activity.ActivityPluginBinding
 import java.io.File
 import java.lang.NullPointerException
@@ -35,7 +36,7 @@ import java.util.ArrayList
 /**
  * SnapkitPlugin
  */
-class SnapkitPlugin : FlutterPlugin, MethodCallHandler, ActivityAware, OnLoginStateChangedListener {
+class SnapkitPlugin : FlutterPlugin, MethodCallHandler, ActivityAware, LoginStateController.OnLoginStateChangedListener {
     /// The MethodChannel that will the communication between Flutter and native Android
     ///
     /// This local reference serves to register the plugin with the Flutter Engine and unregister it
@@ -45,6 +46,7 @@ class SnapkitPlugin : FlutterPlugin, MethodCallHandler, ActivityAware, OnLoginSt
     private var _result: MethodChannel.Result? = null
     private var creativeKitApi: SnapCreativeKitApi? = null
     private var mediaFactory: SnapMediaFactory? = null
+
     override fun onAttachedToEngine(flutterPluginBinding: FlutterPluginBinding) {
         channel = MethodChannel(flutterPluginBinding.binaryMessenger, "snapkit")
         channel!!.setMethodCallHandler(this)
@@ -58,30 +60,44 @@ class SnapkitPlugin : FlutterPlugin, MethodCallHandler, ActivityAware, OnLoginSt
                 _result = result
             }
             "getUser" -> {
-                val query = "{me{externalId, displayName, bitmoji{selfie}}}"
-                SnapLogin.fetchUserData(_activity!!, query, null, object : FetchUserDataCallback {
-                    override fun onSuccess(userDataResponse: UserDataResponse?) {
-                        if (userDataResponse == null || userDataResponse.data == null) {
+                val snapchatApi = SnapLogin.getApi(_activity!!)
+                val query = UserDataQuery
+                        .newBuilder()
+                        .withDisplayName()
+                        .withExternalId()
+                        .withIdToken()
+                        .withBitmoji(BitmojiQuery
+                                .newBuilder()
+                                .build())
+                        .build()
+                snapchatApi.fetchUserData(query, object : UserDataResultCallback {
+                    override fun onSuccess(userDataResult: UserDataResult) {
+                        if (userDataResult.errors.any()) {
+                            val errors = userDataResult.errors.map {  it.message }.joinToString { "; " }
+                            result.error("GetUserError", "Errors: $errors", null)
                             return
                         }
-                        val meData = userDataResponse.data.me
+
+                        if (userDataResult.data == null) {
+                            result.error("GetUserError", "Returned UserData was null", null)
+                            return
+                        }
+
+                        val meData = userDataResult.data!!.meData
                         if (meData == null) {
                             result.error("GetUserError", "Returned MeData was null", null)
                             return
                         }
-                        val res: MutableList<String> = ArrayList()
+
+                        val res: MutableList<String?> = ArrayList()
                         res.add(meData.externalId)
                         res.add(meData.displayName)
-                        res.add(meData.bitmojiData.selfie)
+                        res.add(meData.bitmojiData!!.twoDAvatarUrl)
                         result.success(res)
                     }
 
-                    override fun onFailure(isNetworkError: Boolean, statusCode: Int) {
-                        if (isNetworkError) {
-                            result.error("NetworkGetUserError", "Network Error", statusCode)
-                        } else {
-                            result.error("UnknownGetUserError", "Unknown Error", statusCode)
-                        }
+                    override fun onFailure(userDataResultError: UserDataResultError) {
+                        result.error("GetUserError", userDataResultError.errorDescription, null)
                     }
                 })
             }

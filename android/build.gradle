@@ -45,12 +45,11 @@ android {
 
 dependencies {
     implementation([
-            'com.snapchat.kit.sdk:creative:1.10.0',
-            'com.snapchat.kit.sdk:login:1.10.0',
-            'com.snapchat.kit.sdk:bitmoji:1.10.0',
-            'com.snapchat.kit.sdk:core:1.10.0'
+            'com.snapchat.kit.sdk:creative:1.13.1',
+            'com.snapchat.kit.sdk:login:1.13.1',
+            'com.snapchat.kit.sdk:bitmoji:1.13.1',
+            'com.snapchat.kit.sdk:core:1.13.1'
     ])
-    // implementation "androidx.core:core-ktx:+"
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
 }
 repositories {
