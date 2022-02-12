@@ -146,6 +146,17 @@ class Snapkit {
     }
   }
 
+  /// Shows the bitmoji picker and returns the selected bitmoji url
+  Future<String> selectBitmoji() async {
+    try {
+      final String bitmoji = await _channel.invokeMethod('selectBitmoji');
+
+      return bitmoji;
+    } on PlatformException catch (e) {
+      throw e;
+    }
+  }
+
   /// share shares Media to be sent in the Snapchat app. [mediaType]
   /// defines what type of background media is to be shared.
   ///
