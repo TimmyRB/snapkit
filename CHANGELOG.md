@@ -46,7 +46,7 @@
 * Fixed an issue where some Videos wouldn't work despite meeting Snapchat's Video requirements
 * Bug fixes & Code improvements
 
-# 3.0.0
+## 3.0.0
 
 * **BREAKING CHANGE:** Upgraded Snap Kit on Android to 2.1.0.
   When updating this plugin, please perform the following changes to your app:
