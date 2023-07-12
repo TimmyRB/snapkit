@@ -1,6 +1,6 @@
-import 'package:flutter/material.dart';
 import 'dart:async';
 
+import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:snapkit/snapkit.dart';
 
@@ -191,7 +191,7 @@ class _MyAppState
                 image: NetworkImage(
                     'https://picsum.photos/${(this.context.size!.width.round())}/${this.context.size!.height.round()}.jpg'),
                 sticker: SnapchatSticker(
-                  image: Image.asset('assets/images/icon-256x256.png').image,
+                  image: AssetImage('assets/images/icon-256x256.png'),
                   size: Size(128, 128),
                   offset: StickerOffset(0.45, 0.45),
                   rotation: StickerRotation(

@@ -1,14 +1,13 @@
 import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
-import 'dart:typed_data';
 import 'dart:ui';
 
-import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
-
-import 'package:path_provider/path_provider.dart';
 import 'package:http/http.dart' as http;
+import 'package:path/path.dart' as p;
+import 'package:path_provider/path_provider.dart';
 import 'package:snapkit/SnapchatButton.dart';
 
 class Snapkit {
@@ -132,15 +131,11 @@ class Snapkit {
     try {
       final List<dynamic> userDetails =
           (await _channel.invokeMethod('getUser')) as List<dynamic>;
-      dynamic details2 = userDetails[2];
-      String? bitmojiUrl;
-      if (details2.runtimeType == Null || details2 == null) {
-        bitmojiUrl = null;
-      } else {
-        bitmojiUrl = details2 as String;
-      }
       return new SnapchatUser(
-          userDetails[0] as String, userDetails[1] as String, bitmojiUrl);
+        userDetails[0] as String,
+        userDetails[1] as String,
+        userDetails[2] as String?,
+      );
     } on PlatformException catch (e) {
       throw e;
     }
@@ -172,44 +167,21 @@ class Snapkit {
   }) async {
     assert(caption != null ? caption.length <= 250 : true);
 
-    Completer<File?> imageCompleter = new Completer<File?>();
-    Completer<File?> videoCompleter = new Completer<File?>();
-
-    if (mediaType == SnapchatMediaType.PHOTO) {
-      assert(image != null);
-      image!
-          .resolve(new ImageConfiguration())
-          .addListener(new ImageStreamListener((imageInfo, _) async {
-        String path = (await getTemporaryDirectory()).path;
-        ByteData? byteData =
-            await imageInfo.image.toByteData(format: ImageByteFormat.png);
-        ByteBuffer buffer = byteData!.buffer;
-
-        File file = await new File('$path/image.png').writeAsBytes(
-            buffer.asUint8List(byteData.offsetInBytes, byteData.lengthInBytes));
-
-        imageCompleter.complete(file);
-      }));
-    } else {
-      imageCompleter.complete(null);
+    File? imageFile;
+    File? videoFile;
+    switch (mediaType) {
+      case SnapchatMediaType.PHOTO:
+        assert(image != null);
+        imageFile = await _imageToFile(image!, 'image.png');
+        break;
+      case SnapchatMediaType.VIDEO:
+        assert(videoPath != null);
+        final byteData = await rootBundle.load(videoPath!);
+        videoFile = await _byteDataToFile(byteData, 'video.mp4');
+        break;
+      case SnapchatMediaType.NONE:
+        break;
     }
-
-    if (mediaType == SnapchatMediaType.VIDEO) {
-      assert(videoPath != null);
-      String path = (await getTemporaryDirectory()).path;
-      ByteData byteData = await rootBundle.load(videoPath!);
-      ByteBuffer buffer = byteData.buffer;
-
-      File file = await new File('$path/video.mp4').writeAsBytes(
-          buffer.asUint8List(byteData.offsetInBytes, byteData.lengthInBytes));
-
-      videoCompleter.complete(file);
-    } else {
-      videoCompleter.complete(null);
-    }
-
-    File? imageFile = await imageCompleter.future;
-    File? videoFile = await videoCompleter.future;
 
     await _channel.invokeMethod('sendMedia', <String, dynamic>{
       'mediaType':
@@ -218,7 +190,7 @@ class Snapkit {
       'videoPath': videoFile?.path,
       'sticker': sticker != null ? await sticker.toMap() : null,
       'caption': caption,
-      'attachmentUrl': attachmentUrl
+      'attachmentUrl': attachmentUrl,
     });
   }
 
@@ -234,6 +206,35 @@ class Snapkit {
   /// and will start the login flow when pressed
   SnapchatButton get snapchatButton {
     return SnapchatButton(snapkit: this);
+  }
+
+  static Future<File> _imageToFile(
+    ImageProvider<Object> imageProvider,
+    String fileName,
+  ) async {
+    final completer = Completer<Image>();
+    imageProvider
+        .resolve(ImageConfiguration())
+        .addListener(ImageStreamListener((imageInfo, _) async {
+      completer.complete(imageInfo.image);
+    }));
+    final image = await completer.future;
+
+    final byteData = await image.toByteData(format: ImageByteFormat.png);
+    return _byteDataToFile(byteData!, fileName);
+  }
+
+  static Future<File> _byteDataToFile(
+    ByteData byteData,
+    String fileName,
+  ) async {
+    final bytes = byteData.buffer
+        .asUint8List(byteData.offsetInBytes, byteData.lengthInBytes);
+
+    final path = (await getTemporaryDirectory()).path;
+    final file = File(p.join(path, fileName));
+    await file.writeAsBytes(bytes);
+    return file;
   }
 }
 
@@ -273,30 +274,15 @@ class SnapchatSticker {
   });
 
   Future<Map<String, dynamic>> toMap() async {
-    Completer<Map<String, dynamic>> c = new Completer<Map<String, dynamic>>();
-
-    this
-        .image
-        .resolve(new ImageConfiguration())
-        .addListener(new ImageStreamListener((imageInfo, _) async {
-      String path = (await getTemporaryDirectory()).path;
-      ByteData? byteData =
-          await imageInfo.image.toByteData(format: ImageByteFormat.png);
-      ByteBuffer buffer = byteData!.buffer;
-      File file = await File('$path/sticker.png').writeAsBytes(
-          buffer.asUint8List(byteData.offsetInBytes, byteData.lengthInBytes));
-
-      c.complete(<String, dynamic>{
-        'imagePath': file.path,
-        'width': size.width,
-        'height': size.height,
-        'offsetX': offset.horizontal,
-        'offsetY': offset.vertical,
-        'rotation': rotation.rotation,
-      });
-    }));
-
-    return c.future;
+    final imageFile = await Snapkit._imageToFile(image, 'sticker.png');
+    return {
+      'imagePath': imageFile.path,
+      'width': size.width,
+      'height': size.height,
+      'offsetX': offset.horizontal,
+      'offsetY': offset.vertical,
+      'rotation': rotation.rotation,
+    };
   }
 }
 
@@ -317,7 +303,7 @@ class StickerOffset {
 }
 
 class StickerRotation {
-  /// Rotation of the Sticker
+  /// Rotation of the sticker in degrees
   final double _rotation;
 
   /// Direction of the [rotation] value
