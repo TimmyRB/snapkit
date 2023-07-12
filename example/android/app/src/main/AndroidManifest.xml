@@ -71,9 +71,4 @@
             android:value="2" />
     </application>
 
-    <!-- For apps targeting Android 11 (API 30) or Higher, add this -->
-    <queries>
-        <package android:name="com.snapchat.android" />
-    </queries>
-
 </manifest>

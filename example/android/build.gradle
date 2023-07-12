@@ -15,9 +15,6 @@ allprojects {
     repositories {
         google()
         mavenCentral()
-        maven {
-            url "https://storage.googleapis.com/snap-kit-build/maven"
-        }
     }
 }
 
