@@ -8,6 +8,8 @@ import androidx.annotation.Nullable;
 import com.snap.corekit.utils.SnapUtils;
 import com.snap.creativekit.SnapCreative;
 import com.snap.creativekit.api.SnapCreativeKitApi;
+import com.snap.creativekit.api.SnapCreativeKitCompletionCallback;
+import com.snap.creativekit.api.SnapCreativeKitSendError;
 import com.snap.creativekit.exceptions.SnapMediaSizeException;
 import com.snap.creativekit.exceptions.SnapStickerSizeException;
 import com.snap.creativekit.exceptions.SnapVideoLengthException;
@@ -259,7 +261,18 @@ public class SnapkitPlugin implements FlutterPlugin, MethodCallHandler, Activity
             content.setSnapSticker(snapSticker);
         }
 
-        getSnapCreativeKitApi().send(content);
+        final SnapCreativeKitCompletionCallback callback = new SnapCreativeKitCompletionCallback() {
+            @Override
+            public void onSendSuccess() {
+                result.success("SendMedia Success");
+            }
+
+            @Override
+            public void onSendFailed(SnapCreativeKitSendError snapCreativeKitSendError) {
+                result.error("SendMediaError", snapCreativeKitSendError.name(), null);
+            }
+        };
+        getSnapCreativeKitApi().sendWithCompletionHandler(content, callback);
     }
 
     static class StickerArguments {
