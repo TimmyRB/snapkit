@@ -199,10 +199,10 @@ public class SnapkitPlugin implements FlutterPlugin, MethodCallHandler, Activity
                 try {
                     photoFile = mediaFactory.getSnapPhotoFromFile(imagePath);
                 } catch (SnapMediaSizeException e) {
-                    result.error("SendMediaError", "Could not create SnapPhotoFile", e);
+                    result.error("SendMediaError", "Could not create SnapPhotoFile: " + e, null);
                     return;
                 } catch (NullPointerException e) {
-                    result.error("SendMediaError", "Could not find image file", e);
+                    result.error("SendMediaError", "Could not find image file: " + e, null);
                     return;
                 }
 
@@ -222,10 +222,10 @@ public class SnapkitPlugin implements FlutterPlugin, MethodCallHandler, Activity
                 try {
                     videoFile = mediaFactory.getSnapVideoFromFile(videoPath);
                 } catch (SnapMediaSizeException | SnapVideoLengthException e) {
-                    result.error("SendMediaError", "Could not create SnapVideoFile", e);
+                    result.error("SendMediaError", "Could not create SnapVideoFile: " + e, null);
                     return;
                 } catch (NullPointerException e) {
-                    result.error("SendMediaError", "Could not find video file", e);
+                    result.error("SendMediaError", "Could not find video file: " + e, null);
                     return;
                 }
 
@@ -244,10 +244,10 @@ public class SnapkitPlugin implements FlutterPlugin, MethodCallHandler, Activity
             try {
                 snapSticker = mediaFactory.getSnapStickerFromFile(sticker.image);
             } catch (SnapStickerSizeException e) {
-                result.error("SendMediaError", "Could not create SnapSticker", e);
+                result.error("SendMediaError", "Could not create SnapSticker: " + e, null);
                 return;
             } catch (NullPointerException e) {
-                result.error("SendMediaError", "Could not find sticker file", e);
+                result.error("SendMediaError", "Could not find sticker file: " + e, null);
                 return;
             }
 
@@ -388,7 +388,7 @@ public class SnapkitPlugin implements FlutterPlugin, MethodCallHandler, Activity
 
             @Override
             public void onFailure(@NonNull LoginException e) {
-                result.error("LogoutError", "Error Logging In", e);
+                result.error("LogoutError", "Error Logging In: " + e, null);
                 snapLogin.removeLoginStateCallback(this);
             }
 
