@@ -68,7 +68,7 @@ an error if there was a problem. Always returns `false` on Android.
 
 ```dart
 try {
-  final isVerified = snapkit.verifyPhoneNumber('US', '1231234567');
+  final isVerified = await snapkit.verifyPhoneNumber('US', '1231234567');
 } catch (error, stackTrace) {
   // Handle error
 }
