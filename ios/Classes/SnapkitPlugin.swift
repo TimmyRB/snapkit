@@ -97,6 +97,42 @@ public class SnapkitPlugin: NSObject, FlutterPlugin {
 				}
 				
 				break
+			case "shareWithPhoto":
+				guard let arguments = call.arguments,
+					  let args = arguments as? [String: Any] else { return }
+				
+				do {
+					guard let photoPath = args["photoPath"] as? String else {
+						result(FlutterError(code: "ShareWithPhotoError", message: "Photo Path not provided", details: nil))
+						return
+					}
+					
+					if (!FileManager.default.fileExists(atPath: photoPath)) {
+						throw "Image could not be found in filesystem"
+					}
+					
+					guard let uiImage = UIImage(contentsOfFile: photoPath) else {
+						throw "Image could not be loaded into UIImage"
+					}
+					
+					var photo = SCSDKSnapPhoto(image: uiImage)
+					var content = try self.handleCommonShare(args: args, content: SCSDKPhotoSnapContent(snapPhoto: photo))
+					
+					if (_snapApi == nil) {
+						_snapApi = SCSDKSnapAPI()
+					}
+					
+					_snapApi?.startSending(content, completionHandler: { (error: Error?) in
+						if (error != nil) {
+							result(FlutterError(code: "ShareWithPhotoError", message: error?.localizedDescription, details: "Error occurred while trying to send"))
+						} else {
+							result("ShareWithPhoto Success")
+						}
+					})
+				} catch (let e) {
+					result(FlutterError(code: "ShareWithPhotoError", message: e.localizedDescription, details: "Error caused by handleCommonShare"))
+				}
+				break
 			default:
 				result(FlutterMethodNotImplemented)
 		}
@@ -107,7 +143,7 @@ public class SnapkitPlugin: NSObject, FlutterPlugin {
 		content.attachmentUrl = args["link"] as? String
 		
 		if let sticker = args["sticker"] as? [String: Any] {
-			let imagePath = sticker["path"] as? String
+			let imagePath = sticker["imagePath"] as? String
 			
 			if (!FileManager.default.fileExists(atPath: imagePath!)) {
 				throw "Image could not be found in filesystem"

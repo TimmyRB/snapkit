@@ -95,19 +95,41 @@ class _MyAppState extends State<MyApp> {
               Text(
                   'Snapchat installed: ${_isSnapchatInstalled ? 'Yes' : 'No'}'),
               const SizedBox(height: 16),
-              TextButton(
-                onPressed: () {
-                  CreativeKit.I.shareToCamera(
-                    sticker: const CreativeKitSticker(
-                      NetworkImage(
-                        'https://storage.googleapis.com/cms-storage-bucket/0dbfcc7a59cd1cf16282.png',
-                      ),
-                    ),
-                    caption: 'SnapKit Share to Camera!',
-                    link: Uri.parse('https://kit.snapchat.com'),
-                  );
-                },
-                child: const Text('Share to Camera'),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
+                  TextButton(
+                    onPressed: () {
+                      CreativeKit.I.shareToCamera(
+                        sticker: const CreativeKitSticker(
+                          NetworkImage(
+                            'https://storage.googleapis.com/cms-storage-bucket/0dbfcc7a59cd1cf16282.png',
+                          ),
+                        ),
+                        caption: 'SnapKit Share to Camera!',
+                        link: Uri.parse('https://kit.snapchat.com'),
+                      );
+                    },
+                    child: const Text('Share to Camera'),
+                  ),
+                  TextButton(
+                    onPressed: () {
+                      CreativeKit.I.shareWithPhoto(
+                        const NetworkImage(
+                          'https://img.freepik.com/free-vector/dark-gradient-background-with-copy-space_53876-99548.jpg?size=626&ext=jpg',
+                        ),
+                        sticker: const CreativeKitSticker(
+                          NetworkImage(
+                            'https://storage.googleapis.com/cms-storage-bucket/0dbfcc7a59cd1cf16282.png',
+                          ),
+                        ),
+                        caption: 'SnapKit Share with Photo!',
+                        link: Uri.parse('https://kit.snapchat.com'),
+                      );
+                    },
+                    child: const Text('Share with Photo'),
+                  ),
+                ],
               ),
             ],
           ),
