@@ -2,8 +2,12 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
+	<key>CADisableMinimumFrameDurationOnPhone</key>
+	<true/>
 	<key>CFBundleDevelopmentRegion</key>
 	<string>$(DEVELOPMENT_LANGUAGE)</string>
+	<key>CFBundleDisplayName</key>
+	<string>Snapkit</string>
 	<key>CFBundleExecutable</key>
 	<string>$(EXECUTABLE_NAME)</string>
 	<key>CFBundleIdentifier</key>
@@ -20,7 +24,7 @@
 	<string>????</string>
 	<key>CFBundleURLSchemes</key>
 	<array>
-		<string>snapkitExample</string>
+		<string>myapp</string>
 	</array>
 	<key>CFBundleURLTypes</key>
 	<array>
@@ -31,8 +35,12 @@
 			<string>com.jacobbrasil.snapkitExample</string>
 			<key>CFBundleURLSchemes</key>
 			<array>
-				<string>snapkitExample</string>
+				<string>myapp</string>
 			</array>
+		</dict>
+		<dict>
+			<key>CFBundleTypeRole</key>
+			<string>None</string>
 		</dict>
 	</array>
 	<key>CFBundleVersion</key>
@@ -46,15 +54,16 @@
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
 	<key>SCSDKClientId</key>
-	<string>218615f5-f147-4d84-9b7b-ff85d92a4873</string>
+	<string>0a24d18c-18ed-4a0a-9a87-72f78a7914a4</string>
 	<key>SCSDKRedirectUrl</key>
-	<string>snapkitExample://oauth/snapchat</string>
+	<string>myapp://snapkit/oauth2</string>
 	<key>SCSDKScopes</key>
 	<array>
-		<string>https://auth.snapchat.com/oauth2/api/user.bitmoji.avatar</string>
 		<string>https://auth.snapchat.com/oauth2/api/user.display_name</string>
-		<string>https://auth.snapchat.com/oauth2/api/user.external_id</string>
+		<string>https://auth.snapchat.com/oauth2/api/user.bitmoji.avatar</string>
 	</array>
+	<key>UIApplicationSupportsIndirectInputEvents</key>
+	<true/>
 	<key>UILaunchStoryboardName</key>
 	<string>LaunchScreen</string>
 	<key>UIMainStoryboardFile</key>
@@ -72,7 +81,5 @@
 		<string>UIInterfaceOrientationLandscapeLeft</string>
 		<string>UIInterfaceOrientationLandscapeRight</string>
 	</array>
-	<key>UIViewControllerBasedStatusBarAppearance</key>
-	<false/>
 </dict>
 </plist>
