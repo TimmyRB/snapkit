@@ -27,15 +27,26 @@ class MockSnapkitPlatform
   }
 
   @override
-  Future<void> login() async {}
+  Future<void> login() async {
+    throw UnimplementedError();
+  }
 
   @override
-  Future<void> logout() async {}
+  Future<void> logout() async {
+    throw UnimplementedError();
+  }
 
   @override
   Future<void> shareWithPhoto(String photoPath, Map<String, dynamic>? sticker,
       String? caption, String? link) {
     // TODO: implement shareWithPhoto
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<void> shareToCamera(
+      Map<String, dynamic>? sticker, String? caption, String? link) {
+    // TODO: implement shareToCamera
     throw UnimplementedError();
   }
 }

@@ -87,13 +87,13 @@ public class SnapkitPlugin: NSObject, FlutterPlugin {
 					
 					_snapApi?.startSending(content, completionHandler: { (error: Error?) in
 						if (error != nil) {
-							result(FlutterError(code: "ShareToCameraError", message: error?.localizedDescription, details: nil))
+							result(FlutterError(code: "ShareToCameraError", message: error?.localizedDescription, details: "Error occurred while trying to send"))
 						} else {
 							result("ShareToCamera Success")
 						}
 					})
 				} catch (let e) {
-					result(FlutterError(code: "ShareToCameraError", message: e.localizedDescription, details: nil))
+					result(FlutterError(code: "ShareToCameraError", message: e.localizedDescription, details: "Error caused by handleCommonShare"))
 				}
 				
 				break
@@ -107,7 +107,7 @@ public class SnapkitPlugin: NSObject, FlutterPlugin {
 		content.attachmentUrl = args["link"] as? String
 		
 		if let sticker = args["sticker"] as? [String: Any] {
-			let imagePath = sticker["imagePath"] as? String
+			let imagePath = sticker["path"] as? String
 			
 			if (!FileManager.default.fileExists(atPath: imagePath!)) {
 				throw "Image could not be found in filesystem"
@@ -117,16 +117,21 @@ public class SnapkitPlugin: NSObject, FlutterPlugin {
 				throw "Image could not be loaded into UIImage"
 			}
 			
-			let size = sticker["size"] as? [String: Any]
-			let offset = sticker["offset"] as? [String: Any]
-			let rotation = sticker["rotation"] as? [String: Any]
-			
 			let snapSticker = SCSDKSnapSticker(stickerImage: uiImage)
-			snapSticker.width = size?["width"] as! CGFloat
-			snapSticker.height = size?["height"] as! CGFloat
-			snapSticker.posX = offset?["x"] as! CGFloat
-			snapSticker.posY = offset?["y"] as! CGFloat
-			snapSticker.rotation = rotation?["angle"] as! CGFloat
+			
+			if let size = sticker["size"] as? [String: Any] {
+				snapSticker.width = size["width"] as! CGFloat
+				snapSticker.height = size["height"] as! CGFloat
+			}
+			
+			if let offset = sticker["offset"] as? [String: Any] {
+				snapSticker.posX = offset["x"] as! CGFloat
+				snapSticker.posY = offset["y"] as! CGFloat
+			}
+			
+			if let rotation = sticker["rotation"] as? [String: Any] {
+				snapSticker.rotation = rotation["angle"] as! CGFloat
+			}
 			
 			content.sticker = snapSticker
 		}

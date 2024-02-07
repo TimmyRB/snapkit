@@ -12,19 +12,25 @@ class CreativeKitSticker {
   final ImageProvider image;
 
   /// The size of the sticker relative to the snap.
-  final CreativeStickerSize size;
+  ///
+  /// If null, Snapchat will determine the size of the sticker.
+  final CreativeStickerSize? size;
 
   /// The offset of the sticker relative to the snap.
-  final CreativeKitStickerOffset offset;
+  ///
+  /// If null, the sticker will be in the center of the screen.
+  final CreativeKitStickerOffset? offset;
 
   /// The rotation of the sticker.
-  final CreativeKitStickerRotation rotation;
+  ///
+  /// If null, the sticker will not be rotated.
+  final CreativeKitStickerRotation? rotation;
 
   const CreativeKitSticker(
-    this.image,
-    this.size, {
-    this.offset = const CreativeKitStickerOffset(0, 0),
-    this.rotation = const CreativeKitStickerRotation(0),
+    this.image, {
+    this.size,
+    this.offset,
+    this.rotation,
   });
 
   Future<Map<String, dynamic>> toMap() async {
@@ -63,10 +69,10 @@ class CreativeKitSticker {
 
     File stickerFile = await fileCompleter.future;
     return {
-      'path': stickerFile.path,
-      'size': size.toMap(),
-      'offset': offset.toMap(),
-      'rotation': rotation.toMap(),
+      'imagePath': stickerFile.path,
+      'size': size?.toMap(),
+      'offset': offset?.toMap(),
+      'rotation': rotation?.toMap(),
     };
   }
 }

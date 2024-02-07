@@ -13,6 +13,9 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
+  final GlobalKey<ScaffoldMessengerState> _scaffoldMessengerKey =
+      GlobalKey<ScaffoldMessengerState>();
+
   bool _isSnapchatInstalled = false;
 
   @override
@@ -35,60 +38,79 @@ class _MyAppState extends State<MyApp> {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      home: Scaffold(
-        appBar: AppBar(
-          title: const Text('Snapkit Example App'),
-        ),
-        body: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            CircleAvatar(
-              backgroundImage: LoginKit.I.currentUser?.bitmoji2DAvatarUrl !=
-                      null
-                  ? NetworkImage(LoginKit.I.currentUser!.bitmoji2DAvatarUrl!)
-                  : null,
-              radius: 50,
-            ),
-            const SizedBox(height: 16),
-            Text(
-              LoginKit.I.currentUser?.displayName ?? '',
-              style: const TextStyle(fontSize: 24),
-            ),
-            const SizedBox(height: 4),
-            Text(
-              LoginKit.I.currentUser?.externalId ?? '',
-              style: const TextStyle(
-                fontSize: 8,
-                color: Colors.grey,
+      home: ScaffoldMessenger(
+        key: _scaffoldMessengerKey,
+        child: Scaffold(
+          appBar: AppBar(
+            title: const Text('Snapkit Example App'),
+          ),
+          body: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              CircleAvatar(
+                backgroundImage: LoginKit.I.currentUser?.bitmoji2DAvatarUrl !=
+                        null
+                    ? NetworkImage(LoginKit.I.currentUser!.bitmoji2DAvatarUrl!)
+                    : null,
+                radius: 50,
               ),
-            ),
-            const SizedBox(height: 16),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: [
-                TextButton(
-                  onPressed: () {
-                    LoginKit.I.login();
-                  },
-                  child: const Text('Login'),
+              const SizedBox(height: 16),
+              Text(
+                LoginKit.I.currentUser?.displayName ?? '',
+                style: const TextStyle(fontSize: 24),
+              ),
+              const SizedBox(height: 4),
+              Text(
+                LoginKit.I.currentUser?.externalId ?? '',
+                style: const TextStyle(
+                  fontSize: 8,
+                  color: Colors.grey,
                 ),
-                TextButton(
-                  onPressed: () {
-                    LoginKit.I.logout().then((_) {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(
-                          content: Text('Logged out of App'),
-                        ),
-                      );
-                    });
-                  },
-                  child: const Text('Logout'),
-                ),
-              ],
-            ),
-            const SizedBox(height: 16),
-            Text('Snapchat installed: ${_isSnapchatInstalled ? 'Yes' : 'No'}'),
-          ],
+              ),
+              const SizedBox(height: 16),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
+                  TextButton(
+                    onPressed: () {
+                      LoginKit.I.login();
+                    },
+                    child: const Text('Login'),
+                  ),
+                  TextButton(
+                    onPressed: () {
+                      LoginKit.I.logout().then((_) {
+                        _scaffoldMessengerKey.currentState?.showSnackBar(
+                          const SnackBar(
+                            content: Text('Logged out of App'),
+                          ),
+                        );
+                      });
+                    },
+                    child: const Text('Logout'),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 16),
+              Text(
+                  'Snapchat installed: ${_isSnapchatInstalled ? 'Yes' : 'No'}'),
+              const SizedBox(height: 16),
+              TextButton(
+                onPressed: () {
+                  CreativeKit.I.shareToCamera(
+                    sticker: const CreativeKitSticker(
+                      NetworkImage(
+                        'https://storage.googleapis.com/cms-storage-bucket/0dbfcc7a59cd1cf16282.png',
+                      ),
+                    ),
+                    caption: 'SnapKit Share to Camera!',
+                    link: Uri.parse('https://kit.snapchat.com'),
+                  );
+                },
+                child: const Text('Share to Camera'),
+              ),
+            ],
+          ),
         ),
       ),
     );
