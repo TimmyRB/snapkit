@@ -3,6 +3,19 @@ package com.jacobbrasil.snapkit
 import android.app.Activity
 import android.content.pm.PackageManager
 import android.content.pm.PackageManager.PackageInfoFlags
+import com.snap.creativekit.SnapCreative
+import com.snap.creativekit.api.SnapCreativeKitApi
+import com.snap.creativekit.api.SnapCreativeKitCompletionCallback
+import com.snap.creativekit.api.SnapCreativeKitSendError
+import com.snap.creativekit.exceptions.SnapMediaSizeException
+import com.snap.creativekit.exceptions.SnapVideoLengthException
+import com.snap.creativekit.media.SnapMediaFactory
+import com.snap.creativekit.media.SnapPhotoFile
+import com.snap.creativekit.media.SnapSticker
+import com.snap.creativekit.models.SnapContent
+import com.snap.creativekit.models.SnapLiveCameraContent
+import com.snap.creativekit.models.SnapPhotoContent
+import com.snap.creativekit.models.SnapVideoContent
 import com.snap.loginkit.BitmojiQuery
 import com.snap.loginkit.LoginResultCallback
 import com.snap.loginkit.SnapLoginProvider
@@ -18,6 +31,7 @@ import io.flutter.plugin.common.MethodCall
 import io.flutter.plugin.common.MethodChannel
 import io.flutter.plugin.common.MethodChannel.MethodCallHandler
 import io.flutter.plugin.common.MethodChannel.Result
+import java.io.File
 import java.util.Objects
 
 
@@ -31,8 +45,27 @@ class SnapkitPlugin: FlutterPlugin, MethodCallHandler, ActivityAware {
 
   private var _activity : Activity? = null
 
+  private var _snapApi : SnapCreativeKitApi? = null
+  private var _snapMediaFactory : SnapMediaFactory? = null
+
   private fun requireActivity(): Activity {
     return Objects.requireNonNull<Activity>(_activity, "Snapkit plugin is not attached to an activity.")
+  }
+
+  private fun getSnapApi(): SnapCreativeKitApi {
+    if (_snapApi == null) {
+      _snapApi = SnapCreative.getApi(requireActivity())
+    }
+
+    return _snapApi!!
+  }
+
+  private fun getSnapMediaFactory(): SnapMediaFactory {
+    if (_snapMediaFactory == null) {
+      _snapMediaFactory = SnapCreative.getMediaFactory(requireActivity())
+    }
+
+    return _snapMediaFactory!!
   }
 
   override fun onAttachedToEngine(flutterPluginBinding: FlutterPlugin.FlutterPluginBinding) {
@@ -52,10 +85,10 @@ class SnapkitPlugin: FlutterPlugin, MethodCallHandler, ActivityAware {
         }
       }
       "isLoggedIn" -> {
-        result.success(SnapLoginProvider.get(requireActivity().applicationContext).isUserLoggedIn)
+        result.success(SnapLoginProvider.get(requireActivity()).isUserLoggedIn)
       }
       "login" -> {
-        SnapLoginProvider.get(requireActivity().applicationContext).startTokenGrant(object: LoginResultCallback {
+        SnapLoginProvider.get(requireActivity()).startTokenGrant(object: LoginResultCallback {
           override fun onStart() {
             // Nothing is done here
           }
@@ -73,7 +106,7 @@ class SnapkitPlugin: FlutterPlugin, MethodCallHandler, ActivityAware {
         val bitmojiQuery = BitmojiQuery.newBuilder().withAvatarId().withTwoDAvatarUrl().build()
         val userDataQuery = UserDataQuery.newBuilder().withExternalId().withDisplayName().withBitmoji(bitmojiQuery).build()
 
-        SnapLoginProvider.get(requireActivity().applicationContext).fetchUserData(userDataQuery, object: UserDataResultCallback {
+        SnapLoginProvider.get(requireActivity()).fetchUserData(userDataQuery, object: UserDataResultCallback {
           override fun onSuccess(userDataResult: UserDataResult) {
             if (userDataResult.data?.meData == null) {
               result.error("GetUserError", "User data was null", null)
@@ -97,13 +130,138 @@ class SnapkitPlugin: FlutterPlugin, MethodCallHandler, ActivityAware {
         })
       }
       "logout" -> {
-        SnapLoginProvider.get(requireActivity().applicationContext).clearToken()
+        SnapLoginProvider.get(requireActivity()).clearToken()
         result.success("Logout Success")
+      }
+      "shareToCamera" -> {
+        if (call.arguments !is Map<*, *>) {
+          return
+        }
+
+        val args = call.arguments as Map<*, *>
+
+        try {
+          val content = handleCommonShare(args, SnapLiveCameraContent())
+
+          getSnapApi().sendWithCompletionHandler(content, object: SnapCreativeKitCompletionCallback {
+            override fun onSendSuccess() {
+              result.success("ShareToCamera Success")
+            }
+
+            override fun onSendFailed(e: SnapCreativeKitSendError?) {
+              result.error("ShareToCameraError", e?.name, e)
+            }
+          })
+        } catch (e: Exception) {
+          result.error("ShareToCameraError", e.localizedMessage, "Error caused by handleCommonShare")
+        }
+      }
+      "shareWithPhoto" -> {
+        if (call.arguments !is Map<*, *>) {
+          return
+        }
+
+        val args = call.arguments as Map<*, *>
+
+        try {
+          val photo = File(args["photoPath"].toString())
+
+          if (!photo.exists()) {
+            result.error("ShareWithPhotoError","Photo could not be found in filesystem", null)
+          }
+
+          val content = handleCommonShare(args, SnapPhotoContent(getSnapMediaFactory().getSnapPhotoFromFile(photo)))
+
+          getSnapApi().sendWithCompletionHandler(content, object: SnapCreativeKitCompletionCallback {
+            override fun onSendSuccess() {
+              result.success("ShareWithPhoto Success")
+            }
+
+            override fun onSendFailed(e: SnapCreativeKitSendError?) {
+              result.error("ShareWithPhotoError", e?.name, e)
+            }
+          })
+        } catch (e: SnapMediaSizeException) {
+          result.error("ShareWithPhotoError", e.localizedMessage, e)
+        } catch (e: SnapKitException) {
+          result.error("ShareWithPhotoError", e.localizedMessage, "Error caused by handleCommonShare")
+        }
+      }
+      "shareWithVideo" -> {
+        if (call.arguments !is Map<*, *>) {
+          return
+        }
+
+        val args = call.arguments as Map<*, *>
+
+        try {
+          val video = File(args["videoPath"].toString())
+
+          if (!video.exists()) {
+            result.error("ShareWithVideoError","Video could not be found in filesystem", null)
+          }
+
+          val content = handleCommonShare(args, SnapVideoContent(getSnapMediaFactory().getSnapVideoFromFile(video)))
+
+          getSnapApi().sendWithCompletionHandler(content, object: SnapCreativeKitCompletionCallback {
+            override fun onSendSuccess() {
+              result.success("ShareWithVideo Success")
+            }
+
+            override fun onSendFailed(e: SnapCreativeKitSendError?) {
+              result.error("ShareWithVideoError", e?.name, e)
+            }
+          })
+        } catch (e: SnapMediaSizeException) {
+          result.error("ShareWithVideoError", e.localizedMessage, e)
+        } catch (e: SnapVideoLengthException) {
+          result.error("ShareWithVideoError", e.localizedMessage, e)
+        } catch (e: SnapKitException) {
+          result.error("ShareWithVideoError", e.localizedMessage, "Error caused by handleCommonShare")
+        }
       }
       else -> {
         result.notImplemented()
       }
     }
+  }
+
+  private fun handleCommonShare(args: Map<*, *>, content: SnapContent): SnapContent {
+    content.captionText = args["caption"].toString()
+    content.attachmentUrl = args["link"].toString()
+
+    if (args["sticker"] is Map<*, *>) {
+      val sticker = args["sticker"] as Map<*, *>
+
+      val image = File(sticker["imagePath"].toString())
+
+      if (!image.exists()) {
+        throw SnapKitException("Image could not be found in filesystem")
+      }
+
+      val snapSticker = getSnapMediaFactory().getSnapStickerFromFile(image)
+
+      if (sticker["size"] is Map<*, *>) {
+        val size = sticker["size"] as Map<*, *>
+        snapSticker.setWidthDp(size["width"] as Float)
+        snapSticker.setHeightDp(size["height"] as Float)
+      }
+
+      if (sticker["offset"] is Map<*, *>) {
+        val offset = sticker["offset"] as Map<*, *>
+        snapSticker.setPosX(offset["x"] as Float)
+        snapSticker.setPosY(offset["y"] as Float)
+      }
+
+      if (sticker["rotation"] is Map<*, *>) {
+        val rotation = sticker["rotation"] as Map<*, *>
+        snapSticker.setRotationDegreesClockwise(rotation["angle"] as Float)
+      }
+
+      content.snapSticker = snapSticker
+    }
+
+    return content
   }
 
   override fun onDetachedFromEngine(binding: FlutterPlugin.FlutterPluginBinding) {
@@ -122,3 +280,5 @@ class SnapkitPlugin: FlutterPlugin, MethodCallHandler, ActivityAware {
 
   override fun onDetachedFromActivityForConfigChanges() {  }
 }
+
+class SnapKitException(message: String): Exception(message)
