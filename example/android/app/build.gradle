@@ -22,10 +22,6 @@ if (flutterVersionName == null) {
     flutterVersionName = '1.0'
 }
 
-apply plugin: 'com.android.application'
-apply plugin: 'kotlin-android'
-apply from: "$flutterRoot/packages/flutter_tools/gradle/flutter.gradle"
-
 android {
     namespace "com.jacobbrasil.snapkit_example"
     compileSdkVersion flutter.compileSdkVersion
@@ -47,7 +43,7 @@ android {
     defaultConfig {
         applicationId "com.jacobbrasil.snapkit_example"
         // Snap Kit requires SDK version 19 or later, but `flutter.minSdkVersion` currently is 16.
-        minSdkVersion 19
+        minSdkVersion 33
         targetSdkVersion flutter.targetSdkVersion
         versionCode flutterVersionCode.toInteger()
         versionName flutterVersionName

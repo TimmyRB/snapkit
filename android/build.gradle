@@ -29,7 +29,7 @@ android {
         namespace 'com.jacobbrasil.snapkit'
     }
 
-    compileSdkVersion 33
+    compileSdk 33
 
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8
@@ -46,15 +46,15 @@ android {
     }
 
     defaultConfig {
-        minSdkVersion 19
+        minSdkVersion 33
     }
 
     dependencies {
         testImplementation 'org.jetbrains.kotlin:kotlin-test'
         testImplementation 'org.mockito:mockito-core:5.0.0'
         implementation([
-            'com.snap.loginkit:loginkit:2.0.0', // for Login Kit
-            'com.snap.creativekit:creativekit:2.0.0', // for Creative Kit
+            'com.snap.loginkit:loginkit:2.1.0', // for Login Kit
+            'com.snap.creativekit:creativekit:2.1.0', // for Creative Kit
         ])
     }
 
