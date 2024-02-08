@@ -1,3 +1,6 @@
+import 'dart:io';
+import 'dart:typed_data';
+
 import 'package:flutter/material.dart';
 import 'package:snapkit/snapkit.dart';
 
@@ -95,22 +98,38 @@ class _MyAppState extends State<MyApp> {
               Text(
                   'Snapchat installed: ${_isSnapchatInstalled ? 'Yes' : 'No'}'),
               const SizedBox(height: 16),
+              TextButton(
+                onPressed: () {
+                  CreativeKit.I.shareToCamera(
+                    sticker: const CreativeKitSticker(
+                      NetworkImage(
+                        'https://storage.googleapis.com/cms-storage-bucket/0dbfcc7a59cd1cf16282.png',
+                      ),
+                    ),
+                    caption: 'SnapKit Share to Camera!',
+                    link: Uri.parse('https://kit.snapchat.com'),
+                  );
+                },
+                child: const Text('Share to Camera'),
+              ),
+              const SizedBox(height: 16),
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
                   TextButton(
                     onPressed: () {
-                      CreativeKit.I.shareToCamera(
+                      CreativeKit.I.shareWithPhoto(
+                        const AssetImage('assets/images/test.png'),
                         sticker: const CreativeKitSticker(
                           NetworkImage(
                             'https://storage.googleapis.com/cms-storage-bucket/0dbfcc7a59cd1cf16282.png',
                           ),
                         ),
-                        caption: 'SnapKit Share to Camera!',
+                        caption: 'SnapKit Share with Photo!',
                         link: Uri.parse('https://kit.snapchat.com'),
                       );
                     },
-                    child: const Text('Share to Camera'),
+                    child: const Text('Share with Local Photo'),
                   ),
                   TextButton(
                     onPressed: () {
@@ -127,7 +146,46 @@ class _MyAppState extends State<MyApp> {
                         link: Uri.parse('https://kit.snapchat.com'),
                       );
                     },
-                    child: const Text('Share with Photo'),
+                    child: const Text('Share with Remote Photo'),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 16),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
+                  TextButton(
+                    onPressed: () {
+                      CreativeKit.I.shareWithVideo(
+                        DefaultAssetBundle.of(context)
+                            .load('assets/videos/test.mov'),
+                        sticker: const CreativeKitSticker(
+                          NetworkImage(
+                            'https://storage.googleapis.com/cms-storage-bucket/0dbfcc7a59cd1cf16282.png',
+                          ),
+                        ),
+                        caption: 'SnapKit Share with Video!',
+                        link: Uri.parse('https://kit.snapchat.com'),
+                      );
+                    },
+                    child: const Text('Share with Local Video'),
+                  ),
+                  TextButton(
+                    onPressed: () {
+                      CreativeKit.I.shareWithRemoteVideo(
+                        Uri.parse(
+                          'https://www.dropbox.com/scl/fi/9dhitv3agfv6ffkyq6yqp/test.mp4?rlkey=mtolodijexu3yv07n5dxplv7f&dl=1',
+                        ),
+                        sticker: const CreativeKitSticker(
+                          NetworkImage(
+                            'https://storage.googleapis.com/cms-storage-bucket/0dbfcc7a59cd1cf16282.png',
+                          ),
+                        ),
+                        caption: 'SnapKit Share with Video!',
+                        link: Uri.parse('https://kit.snapchat.com'),
+                      );
+                    },
+                    child: const Text('Share with Remote Video'),
                   ),
                 ],
               ),

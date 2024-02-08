@@ -9,6 +9,7 @@ import 'package:snapkit/creativekit.dart';
 
 class CreativeKitSticker {
   /// The sticker to add to the snap.
+  /// The image must be 300KB or less and a PNG.
   final ImageProvider image;
 
   /// The size of the sticker relative to the snap.

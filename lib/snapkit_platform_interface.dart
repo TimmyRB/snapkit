@@ -59,4 +59,13 @@ abstract class SnapkitPlatform extends PlatformInterface {
   ) {
     throw UnimplementedError('shareWithPhoto() has not been implemented.');
   }
+
+  Future<void> shareWithVideo(
+    String videoPath,
+    Map<String, dynamic>? sticker,
+    String? caption,
+    String? link,
+  ) {
+    throw UnimplementedError('shareWithVideo() has not been implemented.');
+  }
 }

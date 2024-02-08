@@ -77,4 +77,22 @@ class MethodChannelSnapkit extends SnapkitPlatform {
       },
     );
   }
+
+  @override
+  Future<void> shareWithVideo(
+    String videoPath,
+    Map<String, dynamic>? sticker,
+    String? caption,
+    String? link,
+  ) async {
+    await methodChannel.invokeMethod<void>(
+      'shareWithVideo',
+      <String, dynamic>{
+        'videoPath': videoPath,
+        'sticker': sticker,
+        'caption': caption,
+        'link': link,
+      },
+    );
+  }
 }

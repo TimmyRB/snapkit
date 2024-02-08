@@ -35,6 +35,7 @@ class LoginKit {
       StreamController<LoginKitEvent>.broadcast();
 
   /// A stream of Snapchat authentication events.
+  ///
   /// Emits [LoginKitEvent.loggedIn] when the user logs in,
   /// [LoginKitEvent.loggedOut] when the user logs out,
   /// and [LoginKitEvent.updated] when the user data is updated.

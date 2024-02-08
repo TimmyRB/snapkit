@@ -49,6 +49,13 @@ class MockSnapkitPlatform
     // TODO: implement shareToCamera
     throw UnimplementedError();
   }
+
+  @override
+  Future<void> shareWithVideo(String videoPath, Map<String, dynamic>? sticker,
+      String? caption, String? link) {
+    // TODO: implement shareWithVideo
+    throw UnimplementedError();
+  }
 }
 
 void main() {

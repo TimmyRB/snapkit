@@ -133,6 +133,38 @@ public class SnapkitPlugin: NSObject, FlutterPlugin {
 					result(FlutterError(code: "ShareWithPhotoError", message: e.localizedDescription, details: "Error caused by handleCommonShare"))
 				}
 				break
+			case "shareWithVideo":
+				guard let arguments = call.arguments,
+					  let args = arguments as? [String: Any] else { return }
+				
+				do {
+					guard let videoPath = args["videoPath"] as? String else {
+						result(FlutterError(code: "ShareWithVideoError", message: "Video Path not provided", details: nil))
+						return
+					}
+					
+					if (!FileManager.default.fileExists(atPath: videoPath)) {
+						throw "Video could not be found in filesystem"
+					}
+					
+					var video = SCSDKSnapVideo(videoUrl: URL(fileURLWithPath: videoPath))
+					var content = try self.handleCommonShare(args: args, content: SCSDKVideoSnapContent(snapVideo: video))
+					
+					if (_snapApi == nil) {
+						_snapApi = SCSDKSnapAPI()
+					}
+					
+					_snapApi?.startSending(content, completionHandler: { (error: Error?) in
+						if (error != nil) {
+							result(FlutterError(code: "ShareWithVideoError", message: error?.localizedDescription, details: "Error occurred while trying to send"))
+						} else {
+							result("ShareWithVideo Success")
+						}
+					})
+				} catch (let e) {
+					result(FlutterError(code: "ShareWithVideoError", message: e.localizedDescription, details: "Error caused by handleCommonShare"))
+				}
+				break
 			default:
 				result(FlutterMethodNotImplemented)
 		}
