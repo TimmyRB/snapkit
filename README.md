@@ -11,6 +11,7 @@ Contents:
 
  - [What's New](#✨-whats-new)
  - [Installation](#🛠️-installation)
+	 - [Upgrading](#upgrading-from-older-versions)
    - [iOS Setup](#-ios-setup)
    - [Android Setup](#🤖-android-setup)
  - [Usage](#✏️-usage)
@@ -37,6 +38,45 @@ import 'package:snapkit/snapkit.dart';
 ```
 
 The following setup instructions assume you have created an app on the [Snapchat Developer Portal](https://devportal.snap.com/manage/) and have enabled 'Login Kit', 'Bitmoji Kit' & 'Creative Kit' in your app's settings. Make sure to setup a redirect URI in the 'Login Kit' settings and add your Snapchat username as a demo user in the general tab.
+
+### Upgrading from older versions
+
+On iOS the Installation is the same as before, however on Android you will need to modify and remove a few lines if you're upgrading from < 3.0.0.
+
+Firstly, remove this line from your `app/android/build.grade`
+
+```groovy
+maven {
+  url "https://storage.googleapis.com/snap-kit-build/maven"
+}
+```
+
+Next, in your `app/android/app/build.grade`, remove these lines
+
+```groovy
+  implementation([
+    'com.snapchat.kit.sdk:creative:1.10.0',
+    'com.snapchat.kit.sdk:login:1.10.0',
+    'com.snapchat.kit.sdk:bitmoji:1.10.0',
+    'com.snapchat.kit.sdk:core:1.10.0'
+])
+```
+
+Finally, in your `app/android/app/src/main/AndroidManifest.xml`
+
+Change the following
+```xml
+com.snapchat.kit.sdk.clientId → com.snap.kit.clientId
+com.snapchat.kit.sdk.redirectUrl → com.snap.kit.redirectUrl
+com.snapchat.kit.sdk.scopes → com.snap.kit.scopes
+```
+
+And remove these lines
+```xml
+<queries>
+  <package android:name="com.snapchat.android" />
+</queries>
+```
 
 ###  iOS Setup
 
@@ -104,6 +144,79 @@ import SCSDKLoginKit // Add this import
 ```
 
 ### 🤖 Android Setup
+
+Add the following to your `AndroidMainfest.xml` in `app/android/app/src/main` Make sure to replace `YOUR_CLIENT_ID_HERE`, `YOUR_SCHEME`, `YOUR_HOST` & `YOUR_PATH` with the correct information from your [Snapchat Developer Portal](https://devportal.snap.com/manage/)
+
+`YOUR_SCHEME://YOUR_HOST/YOUR_PATH` Is your redirect URL from the Developer Portal that you should've made when enabling LoginKit. You will need to split up these redirect url segements in the `SnapKitActivity` block.
+
+```xml
+<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+	<application
+		android:label="snapkit_example"
+		android:name="${applicationName}"
+		android:icon="@mipmap/ic_launcher">
+
+	<meta-data
+		android:name="com.snap.kit.clientId"
+		android:value="YOUR_CLIENT_ID_HERE" />
+
+	<meta-data
+		android:name="com.snap.kit.redirectUrl"
+		android:value="YOUR_SCHEME://YOUR_HOST/YOUR_PATH" />
+
+	<meta-data
+		android:name="com.snap.kit.scopes"
+		android:resource="@array/snap_connect_scopes" />
+
+	<activity
+		android:name="com.snap.corekit.SnapKitActivity"
+		android:launchMode="singleTask"
+		android:exported="true">
+		<intent-filter>
+			<action android:name="android.intent.action.VIEW" />
+			<category android:name="android.intent.category.DEFAULT" />
+			<category android:name="android.intent.category.BROWSABLE" />
+			<!-- Change this to match your redirect URL -->
+			<data
+				android:scheme="YOUR_SCHEME"
+				android:host="YOUR_HOST"
+				android:path="/YOUR_PATH" />
+		</intent-filter>
+	</activity>
+
+	<!-- Add this if you want to use the Creative Kit -->
+	<provider
+		android:name="androidx.core.content.FileProvider"
+		android:authorities="${applicationId}.fileprovider"
+		android:exported="false"
+		android:grantUriPermissions="true">
+		<meta-data
+			android:name="android.support.FILE_PROVIDER_PATHS"
+			android:resource="@xml/file_paths" />
+	</provider>
+
+...
+```
+
+Create a file named `arrays.xml` in `app/android/app/src/main/res/values` with the following content
+```xml
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="snap_connect_scopes">
+        <item>https://auth.snapchat.com/oauth2/api/user.bitmoji.avatar</item>
+        <item>https://auth.snapchat.com/oauth2/api/user.display_name</item>
+        <item>https://auth.snapchat.com/oauth2/api/user.external_id</item>
+    </string-array>
+</resources>
+```
+
+Create another file named `file_paths.xml` in `app/android/app/src/main/res/xml` with the following
+```xml
+<?xml version="1.0" encoding="utf-8"?>
+<paths>
+    <root-path name="root" path="." />
+</paths>
+```
 
 
 ## ✏️ Usage
