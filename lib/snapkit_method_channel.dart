@@ -45,6 +45,11 @@ class MethodChannelSnapkit extends SnapkitPlatform {
   }
 
   @override
+  Future<String?> getAccessToken() async {
+    return await methodChannel.invokeMethod<String>('getAccessToken');
+  }
+
+  @override
   Future<void> logout() async {
     await methodChannel.invokeMethod<void>('logout');
   }

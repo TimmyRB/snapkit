@@ -98,17 +98,19 @@ class LoginKit {
       }
     }
 
-    if (data['externalId'] == null || data['displayName'] == null) {
+    if (data['externalId'] == null ||
+        data['displayName'] == null ||
+        data['openIdToken'] == null) {
       throw LoginKitException('Invalid user data');
     }
 
-    _currentUser = SnapchatUser(
-      data['externalId']!,
-      data['displayName']!,
-      data['bitmoji2DAvatarUrl'],
-      data['bitmojiAvatarId'],
-    );
+    _currentUser = SnapchatUser.fromJson(data);
     _authEventsController.add(event);
+  }
+
+  /// Gets the Access Token for the Snapchat user.
+  Future<String?> getAccessToken() async {
+    return SnapkitPlatform.instance.getAccessToken();
   }
 
   /// Logs the Snapchat user out of your app.

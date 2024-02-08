@@ -17,11 +17,14 @@ import com.snap.creativekit.models.SnapContent
 import com.snap.creativekit.models.SnapLiveCameraContent
 import com.snap.creativekit.models.SnapPhotoContent
 import com.snap.creativekit.models.SnapVideoContent
+import com.snap.loginkit.AccessTokenResultCallback
 import com.snap.loginkit.BitmojiQuery
 import com.snap.loginkit.LoginResultCallback
+import com.snap.loginkit.SnapLogin
 import com.snap.loginkit.SnapLoginProvider
 import com.snap.loginkit.UserDataQuery
 import com.snap.loginkit.UserDataResultCallback
+import com.snap.loginkit.exceptions.AccessTokenException
 import com.snap.loginkit.exceptions.LoginException
 import com.snap.loginkit.exceptions.UserDataException
 import com.snap.loginkit.models.UserDataResult
@@ -108,7 +111,7 @@ class SnapkitPlugin: FlutterPlugin, MethodCallHandler, ActivityAware {
       }
       "getCurrentUser" -> {
         val bitmojiQuery = BitmojiQuery.newBuilder().withAvatarId().withTwoDAvatarUrl().build()
-        val userDataQuery = UserDataQuery.newBuilder().withExternalId().withDisplayName().withBitmoji(bitmojiQuery).build()
+        val userDataQuery = UserDataQuery.newBuilder().withExternalId().withIdToken().withDisplayName().withBitmoji(bitmojiQuery).build()
 
         SnapLoginProvider.get(requireActivity()).fetchUserData(userDataQuery, object: UserDataResultCallback {
           override fun onSuccess(userDataResult: UserDataResult) {
@@ -120,6 +123,7 @@ class SnapkitPlugin: FlutterPlugin, MethodCallHandler, ActivityAware {
             val meData = userDataResult.data!!.meData!!
             val map: HashMap<String, String?> = HashMap<String, String?>()
             map["externalId"] = meData.externalId
+            map["openIdToken"] = meData.idToken
             map["displayName"] = meData.displayName
             map["bitmoji2DAvatarUrl"] = meData.bitmojiData?.twoDAvatarUrl
             map["bitmojiAvatarId"] = meData.bitmojiData?.avatarId
@@ -131,6 +135,18 @@ class SnapkitPlugin: FlutterPlugin, MethodCallHandler, ActivityAware {
           override fun onFailure(exception: UserDataException) {
             result.error("GetUserError", exception.localizedMessage, exception)
           }
+        })
+      }
+      "getAccessToken" -> {
+        SnapLoginProvider.get(requireActivity()).fetchAccessToken(object: AccessTokenResultCallback {
+          override fun onSuccess(token: String) {
+            result.success(token)
+          }
+
+          override fun onFailure(e: AccessTokenException) {
+            result.error("GetAccessTokenError", e.localizedMessage, e)
+          }
+
         })
       }
       "logout" -> {

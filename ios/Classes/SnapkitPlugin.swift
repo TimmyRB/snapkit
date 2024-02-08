@@ -54,7 +54,7 @@ public class SnapkitPlugin: NSObject, FlutterPlugin {
 				})
 				break
 			case "getCurrentUser":
-				let queryBuilder = SCSDKUserDataQueryBuilder().withExternalId().withDisplayName().withBitmojiAvatarID().withBitmojiTwoDAvatarUrl()
+				let queryBuilder = SCSDKUserDataQueryBuilder().withExternalId().withDisplayName().withBitmojiAvatarID().withBitmojiTwoDAvatarUrl().withIdToken()
 				let query = queryBuilder.build()
 				SCSDKLoginClient.fetchUserData(with: query,
 											   success: {(userdata: SCSDKUserData?, partialError: Error?) in
@@ -62,6 +62,7 @@ public class SnapkitPlugin: NSObject, FlutterPlugin {
 					
 					let map: [String: String?] = [
 						"externalId": data.externalID,
+						"openIdToken": data.idToken,
 						"displayName": data.displayName,
 						"bitmoji2DAvatarUrl": data.bitmojiTwoDAvatarUrl,
 						"bitmojiAvatarId": data.bitmojiAvatarID,
@@ -80,6 +81,8 @@ public class SnapkitPlugin: NSObject, FlutterPlugin {
 					}
 				})
 				break
+			case "getAccessToken":
+				result(SCSDKLoginClient.getAccessToken())
 			case "logout":
 				SCSDKLoginClient.clearToken()
 				result("Logout Success")

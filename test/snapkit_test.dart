@@ -58,6 +58,11 @@ class MockSnapkitPlatform
   Future<String?> getSnapSDKVersion() {
     throw UnimplementedError();
   }
+
+  @override
+  Future<String?> getAccessToken() {
+    throw UnimplementedError();
+  }
 }
 
 void main() {

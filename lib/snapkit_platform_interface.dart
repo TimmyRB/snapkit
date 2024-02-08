@@ -43,6 +43,10 @@ abstract class SnapkitPlatform extends PlatformInterface {
     throw UnimplementedError('getCurrentUser() has not been implemented.');
   }
 
+  Future<String?> getAccessToken() {
+    throw UnimplementedError('getAccessToken() has not been implemented.');
+  }
+
   Future<void> logout() {
     throw UnimplementedError('logout() has not been implemented.');
   }
