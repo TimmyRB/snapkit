@@ -48,7 +48,7 @@ public class SnapkitPlugin: NSObject, FlutterPlugin {
 				let query = queryBuilder.build()
 				SCSDKLoginClient.fetchUserData(with: query,
 											   success: {(userdata: SCSDKUserData?, partialError: Error?) in
-					guard let data = userdata else { return }
+					guard let data = userdata else { result(FlutterError(code: "GetUserError", message: "User data was null", details: nil)); return }
 					
 					let map: [String: String?] = [
 						"externalId": data.externalID,
