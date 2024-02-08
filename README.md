@@ -15,6 +15,8 @@ Contents:
    - [iOS Setup](#-ios-setup)
    - [Android Setup](#🤖-android-setup)
  - [Usage](#✏️-usage)
+	 - [LoginKit](#loginkit)
+	 - [CreativeKit](#creativekit)
 
 ## ✨ What's new
 
