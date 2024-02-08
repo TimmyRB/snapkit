@@ -269,6 +269,20 @@ await LoginKit.I.logout()
 
 This Kit is used for sharing photos, videos, stickers and more to Snapchat from inside your app. This Kit does **not** require the user be authenticated with LoginKit.
 
+#### Media Size and Length Restrictions:
+
+Shared media must be 300 MB or smaller.\
+Videos must be 60 seconds or shorter.\
+Videos that are longer than 10 seconds are split up into multiple Snaps of 10 seconds or less.
+
+#### Suggested Media Parameters:
+
+Aspect Ratio: 9:16\
+Preferred Image File Types: .jpg or .png\
+Preferred Video File Types: .mp4 or .mov\
+Dimensions: 1080px x 1920px\
+Video Bitrate: 1080p at 8mbps or 720p at 5mbps
+
 Create a Sticker
 ```dart
 var sticker = CreativeKitSticker(
