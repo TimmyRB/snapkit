@@ -3,6 +3,46 @@
         android:label="snapkit_example"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
+
+        <meta-data
+            android:name="com.snap.kit.clientId"
+            android:value="5bebec27-5d21-4b7f-b771-7b2fdc8afc11" />
+
+        <meta-data
+            android:name="com.snap.kit.redirectUrl"
+            android:value="snapkitExample://oauth/snapchat" />
+
+        <meta-data
+            android:name="com.snap.kit.scopes"
+            android:resource="@array/snap_connect_scopes" />
+
+        <activity
+            android:name="com.snap.corekit.SnapKitActivity"
+            android:launchMode="singleTask"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+                <!-- Change this to match your redirect URL -->
+                <data
+                    android:scheme="snapkitExample"
+                    android:host="oauth"
+                    android:path="/snapchat" />
+            </intent-filter>
+        </activity>
+
+        <!-- Add this if you want to use the Creative Kit -->
+        <provider
+            android:name="androidx.core.content.FileProvider"
+            android:authorities="${applicationId}.fileprovider"
+            android:exported="false"
+            android:grantUriPermissions="true">
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/file_paths" />
+        </provider>
+
         <activity
             android:name=".MainActivity"
             android:exported="true"
@@ -30,4 +70,5 @@
             android:name="flutterEmbedding"
             android:value="2" />
     </application>
+
 </manifest>
