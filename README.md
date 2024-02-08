@@ -220,3 +220,100 @@ Create another file named `file_paths.xml` in `app/android/app/src/main/res/xml`
 
 
 ## ✏️ Usage
+
+Determine if Snapchat is installed on a user's device
+```dart
+await SnapKit.I.isSnapchatInstalled() → bool
+```
+
+Check the version of the native SnapSDK running
+```dart
+await SnapKit.I.getSnapSDKVersion() → String
+```
+
+### LoginKit
+
+This Kit is used for authenticating with the user's Snapchat account. Using this Kit allows you to get a user's External ID, OIDC, Display Name, Bitmoji URL & Access Token.
+
+Check if a user is already logged in
+```dart
+await LoginKit.I.isLoggedIn() → bool
+```
+
+Start the login flow
+```dart
+await LoginKit.I.login()
+```
+
+Logging in automatically fetchs the user's data from Snapchat, however if you need to refresh it for whatever reason you can do so manually
+```dart
+await LoginKit.I.getCurrentUser()
+```
+
+Since only one user can be authenticated with Snapchat at a time on a device, the current user and their data is found here
+```dart
+LoginKit.I.currentUser → SnapchatUser
+```
+
+Retrieve the access token like this
+```dart
+await LoginKit.I.getAccessToken() → String?
+```
+
+Logout the user and unlink from the current session
+```dart
+await LoginKit.I.logout()
+```
+
+### CreativeKit
+
+This Kit is used for sharing photos, videos, stickers and more to Snapchat from inside your app. This Kit does **not** require the user be authenticated with LoginKit.
+
+Create a Sticker
+```dart
+var sticker = CreativeKitSticker(
+		AssetImage('assets/image.png'),
+		size: StickerSize(32, 32),
+		offset: StickerOffset(0.5, 0.5),
+		rotation: StickerRotation(30),
+	);
+```
+
+Share to the Snapchat Camera
+```dart
+CreativeKit.I.shareToCamera(
+	sticker: sticker,
+	caption: 'This is Awesome!',
+	link: Uri.parse('https://jacobbrasil.com/'),
+)
+```
+
+Share with a background Photo
+```dart
+CreativeKit.I.shareWithPhoto(
+	AssetImage('assets/image.png'),
+	sticker: sticker,
+	caption: 'This is Awesome!',
+	link: Uri.parse('https://jacobbrasil.com/'),
+)
+```
+
+Share with a background Video that's available locally
+```dart
+CreativeKit.I.shareWithVideo(
+	DefaultAssetBundle.of(context).load('assets/video.mp4'),
+	sticker: sticker,
+	caption: 'This is Awesome!',
+	link: Uri.parse('https://jacobbrasil.com/'),
+)
+```
+
+Share with a background Video that's available online
+```dart
+CreativeKit.I.shareWithRemoteVideo(
+	Uri.parse('https://link.to/video.mp4'),
+	sticker: sticker,
+	caption: 'This is Awesome!',
+	link: Uri.parse('https://jacobbrasil.com/'),
+)
+```

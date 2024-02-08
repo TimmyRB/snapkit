@@ -14,6 +14,6 @@ class SnapKit {
 
   /// Gets the version of the Snap SDK running on your device.
   Future<String> getSnapSDKVersion() async {
-    return (await SnapkitPlatform.instance.getSnapSDKVersion()) ?? '';
+    return (await SnapkitPlatform.instance.getSnapSDKVersion()) ?? 'Unknown';
   }
 }
