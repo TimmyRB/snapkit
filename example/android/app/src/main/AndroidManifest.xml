@@ -6,11 +6,11 @@
 
         <meta-data
             android:name="com.snap.kit.clientId"
-            android:value="5bebec27-5d21-4b7f-b771-7b2fdc8afc11" />
+            android:value="0a24d18c-18ed-4a0a-9a87-72f78a7914a4" />
 
         <meta-data
             android:name="com.snap.kit.redirectUrl"
-            android:value="snapkitExample://oauth/snapchat" />
+            android:value="myapp://snapkit/oauth2" />
 
         <meta-data
             android:name="com.snap.kit.scopes"
@@ -26,9 +26,9 @@
                 <category android:name="android.intent.category.BROWSABLE" />
                 <!-- Change this to match your redirect URL -->
                 <data
-                    android:scheme="snapkitExample"
-                    android:host="oauth"
-                    android:path="/snapchat" />
+                    android:scheme="myapp"
+                    android:host="snapkit"
+                    android:path="/oauth2" />
             </intent-filter>
         </activity>
 

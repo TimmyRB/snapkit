@@ -8,6 +8,7 @@ import com.snap.creativekit.api.SnapCreativeKitApi
 import com.snap.creativekit.api.SnapCreativeKitCompletionCallback
 import com.snap.creativekit.api.SnapCreativeKitSendError
 import com.snap.creativekit.exceptions.SnapMediaSizeException
+import com.snap.creativekit.exceptions.SnapStickerSizeException
 import com.snap.creativekit.exceptions.SnapVideoLengthException
 import com.snap.creativekit.media.SnapMediaFactory
 import com.snap.creativekit.media.SnapPhotoFile
@@ -75,6 +76,9 @@ class SnapkitPlugin: FlutterPlugin, MethodCallHandler, ActivityAware {
 
   override fun onMethodCall(call: MethodCall, result: Result) {
     when (call.method) {
+      "sdkVersion" -> {
+        result.success(SnapLoginProvider.getVersion())
+      }
       "isSnapchatInstalled" -> {
         try {
           val pm: PackageManager = requireActivity().packageManager
@@ -152,7 +156,9 @@ class SnapkitPlugin: FlutterPlugin, MethodCallHandler, ActivityAware {
               result.error("ShareToCameraError", e?.name, e)
             }
           })
-        } catch (e: Exception) {
+        } catch (e: SnapStickerSizeException) {
+          result.error("ShareToCameraError", e.localizedMessage, e)
+        } catch (e: SnapKitException) {
           result.error("ShareToCameraError", e.localizedMessage, "Error caused by handleCommonShare")
         }
       }
@@ -182,6 +188,8 @@ class SnapkitPlugin: FlutterPlugin, MethodCallHandler, ActivityAware {
             }
           })
         } catch (e: SnapMediaSizeException) {
+          result.error("ShareWithPhotoError", e.localizedMessage, e)
+        } catch (e: SnapStickerSizeException) {
           result.error("ShareWithPhotoError", e.localizedMessage, e)
         } catch (e: SnapKitException) {
           result.error("ShareWithPhotoError", e.localizedMessage, "Error caused by handleCommonShare")
@@ -216,6 +224,8 @@ class SnapkitPlugin: FlutterPlugin, MethodCallHandler, ActivityAware {
           result.error("ShareWithVideoError", e.localizedMessage, e)
         } catch (e: SnapVideoLengthException) {
           result.error("ShareWithVideoError", e.localizedMessage, e)
+        } catch (e: SnapStickerSizeException) {
+          result.error("ShareWithVideoError", e.localizedMessage, e)
         } catch (e: SnapKitException) {
           result.error("ShareWithVideoError", e.localizedMessage, "Error caused by handleCommonShare")
         }
@@ -239,26 +249,30 @@ class SnapkitPlugin: FlutterPlugin, MethodCallHandler, ActivityAware {
         throw SnapKitException("Image could not be found in filesystem")
       }
 
-      val snapSticker = getSnapMediaFactory().getSnapStickerFromFile(image)
+      try {
+        val snapSticker = getSnapMediaFactory().getSnapStickerFromFile(image)
 
-      if (sticker["size"] is Map<*, *>) {
-        val size = sticker["size"] as Map<*, *>
-        snapSticker.setWidthDp(size["width"] as Float)
-        snapSticker.setHeightDp(size["height"] as Float)
+        if (sticker["size"] is Map<*, *>) {
+          val size = sticker["size"] as Map<*, *>
+          snapSticker.setWidthDp(size["width"] as Float)
+          snapSticker.setHeightDp(size["height"] as Float)
+        }
+
+        if (sticker["offset"] is Map<*, *>) {
+          val offset = sticker["offset"] as Map<*, *>
+          snapSticker.setPosX(offset["x"] as Float)
+          snapSticker.setPosY(offset["y"] as Float)
+        }
+
+        if (sticker["rotation"] is Map<*, *>) {
+          val rotation = sticker["rotation"] as Map<*, *>
+          snapSticker.setRotationDegreesClockwise(rotation["angle"] as Float)
+        }
+
+        content.snapSticker = snapSticker
+      } catch (e: SnapStickerSizeException) {
+        throw e
       }
-
-      if (sticker["offset"] is Map<*, *>) {
-        val offset = sticker["offset"] as Map<*, *>
-        snapSticker.setPosX(offset["x"] as Float)
-        snapSticker.setPosY(offset["y"] as Float)
-      }
-
-      if (sticker["rotation"] is Map<*, *>) {
-        val rotation = sticker["rotation"] as Map<*, *>
-        snapSticker.setRotationDegreesClockwise(rotation["angle"] as Float)
-      }
-
-      content.snapSticker = snapSticker
     }
 
     return content

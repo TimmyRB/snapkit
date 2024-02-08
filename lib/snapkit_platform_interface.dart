@@ -27,6 +27,10 @@ abstract class SnapkitPlatform extends PlatformInterface {
     throw UnimplementedError('isSnapchatInstalled() has not been implemented.');
   }
 
+  Future<String?> getSnapSDKVersion() {
+    throw UnimplementedError('getSnapSDKVersion() has not been implemented.');
+  }
+
   Future<bool?> isLoggedIn() {
     throw UnimplementedError('isLoggedIn() has not been implemented.');
   }

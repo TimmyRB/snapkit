@@ -39,21 +39,23 @@ class MockSnapkitPlatform
   @override
   Future<void> shareWithPhoto(String photoPath, Map<String, dynamic>? sticker,
       String? caption, String? link) {
-    // TODO: implement shareWithPhoto
     throw UnimplementedError();
   }
 
   @override
   Future<void> shareToCamera(
       Map<String, dynamic>? sticker, String? caption, String? link) {
-    // TODO: implement shareToCamera
     throw UnimplementedError();
   }
 
   @override
   Future<void> shareWithVideo(String videoPath, Map<String, dynamic>? sticker,
       String? caption, String? link) {
-    // TODO: implement shareWithVideo
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<String?> getSnapSDKVersion() {
     throw UnimplementedError();
   }
 }

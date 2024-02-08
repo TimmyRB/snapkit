@@ -1,6 +1,3 @@
-import 'dart:io';
-import 'dart:typed_data';
-
 import 'package:flutter/material.dart';
 import 'package:snapkit/snapkit.dart';
 
@@ -20,6 +17,7 @@ class _MyAppState extends State<MyApp> {
       GlobalKey<ScaffoldMessengerState>();
 
   bool _isSnapchatInstalled = false;
+  String _snapSDKVersion = '';
 
   @override
   void initState() {
@@ -28,6 +26,12 @@ class _MyAppState extends State<MyApp> {
     LoginKit.I.authEvents.listen((event) {
       Future.delayed(Duration.zero, () {
         setState(() {});
+      });
+    });
+
+    SnapKit.I.getSnapSDKVersion().then((value) {
+      setState(() {
+        _snapSDKVersion = value;
       });
     });
 
@@ -95,6 +99,7 @@ class _MyAppState extends State<MyApp> {
                 ],
               ),
               const SizedBox(height: 16),
+              Text('SnapSDK Version: $_snapSDKVersion'),
               Text(
                   'Snapchat installed: ${_isSnapchatInstalled ? 'Yes' : 'No'}'),
               const SizedBox(height: 16),

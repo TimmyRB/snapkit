@@ -1,11 +1,10 @@
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:snapkit/snapkit_method_channel.dart';
 
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
 
-  MethodChannelSnapkit platform = MethodChannelSnapkit();
+  // MethodChannelSnapkit platform = MethodChannelSnapkit();
   const MethodChannel channel = MethodChannel('snapkit');
 
   setUp(() {

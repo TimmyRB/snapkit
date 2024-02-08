@@ -17,8 +17,18 @@ public class SnapkitPlugin: NSObject, FlutterPlugin {
 	
 	var _snapApi: SCSDKSnapAPI?
 	
+	func getSnapApi() -> SCSDKSnapAPI {
+		if (_snapApi == nil) {
+			_snapApi = SCSDKSnapAPI()
+		}
+		
+		return _snapApi!
+	}
+	
 	public func handle(_ call: FlutterMethodCall, result: @escaping FlutterResult) {
 		switch call.method {
+			case "sdkVersion":
+				result("2.5.0")
 			case "isSnapchatInstalled":
 				let appScheme = "snapchat://app"
 				let appUrl = URL(string: appScheme)
@@ -81,11 +91,7 @@ public class SnapkitPlugin: NSObject, FlutterPlugin {
 				do {
 					var content = try self.handleCommonShare(args: args, content: SCSDKNoSnapContent())
 					
-					if (_snapApi == nil) {
-						_snapApi = SCSDKSnapAPI()
-					}
-					
-					_snapApi?.startSending(content, completionHandler: { (error: Error?) in
+					getSnapApi().startSending(content, completionHandler: { (error: Error?) in
 						if (error != nil) {
 							result(FlutterError(code: "ShareToCameraError", message: error?.localizedDescription, details: "Error occurred while trying to send"))
 						} else {
@@ -118,11 +124,7 @@ public class SnapkitPlugin: NSObject, FlutterPlugin {
 					var photo = SCSDKSnapPhoto(image: uiImage)
 					var content = try self.handleCommonShare(args: args, content: SCSDKPhotoSnapContent(snapPhoto: photo))
 					
-					if (_snapApi == nil) {
-						_snapApi = SCSDKSnapAPI()
-					}
-					
-					_snapApi?.startSending(content, completionHandler: { (error: Error?) in
+					getSnapApi().startSending(content, completionHandler: { (error: Error?) in
 						if (error != nil) {
 							result(FlutterError(code: "ShareWithPhotoError", message: error?.localizedDescription, details: "Error occurred while trying to send"))
 						} else {
@@ -150,11 +152,7 @@ public class SnapkitPlugin: NSObject, FlutterPlugin {
 					var video = SCSDKSnapVideo(videoUrl: URL(fileURLWithPath: videoPath))
 					var content = try self.handleCommonShare(args: args, content: SCSDKVideoSnapContent(snapVideo: video))
 					
-					if (_snapApi == nil) {
-						_snapApi = SCSDKSnapAPI()
-					}
-					
-					_snapApi?.startSending(content, completionHandler: { (error: Error?) in
+					getSnapApi().startSending(content, completionHandler: { (error: Error?) in
 						if (error != nil) {
 							result(FlutterError(code: "ShareWithVideoError", message: error?.localizedDescription, details: "Error occurred while trying to send"))
 						} else {

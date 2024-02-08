@@ -16,6 +16,11 @@ class MethodChannelSnapkit extends SnapkitPlatform {
   }
 
   @override
+  Future<String?> getSnapSDKVersion() async {
+    return await methodChannel.invokeMethod<String>('sdkVersion');
+  }
+
+  @override
   Future<bool?> isLoggedIn() async {
     return await methodChannel.invokeMethod<bool>('isLoggedIn');
   }
