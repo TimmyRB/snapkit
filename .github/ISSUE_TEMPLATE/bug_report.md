@@ -12,8 +12,15 @@ assignees: ''
      Before creating an issue, make sure to check our documentation
      and other issues for possible fixes to your problem
       * https://pub.dev/documentation/snapkit/latest/
-      * https://github.com/TimmyRB/snapkit/wiki
+      * https://github.com/TimmyRB/snapkit/README.md
 -->
+
+## Versions
+
+ - SnapKit: <!-- Enter the version of the plugin you are using -->
+ - Snapchat: <!-- Found in Snapchat Settings by scrolling to the bottom -->
+ - iOS: <!-- The version of iOS this bug is happening on, leave blank if not applicable -->
+ - Android: <!-- The version of Android this bug is happening on, leave blank if not applicable -->
 
 ## Steps to Reproduce
 

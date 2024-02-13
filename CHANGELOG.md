@@ -45,3 +45,18 @@
 * Fixed Videos not working on Android Clients
 * Fixed an issue where some Videos wouldn't work despite meeting Snapchat's Video requirements
 * Bug fixes & Code improvements
+
+## 3.0.0
+
+* Restructured the project
+* Upgraded SnapSDK to 2.1.0 for Android
+* Upgraded SnapSDK to 2.5.0 for iOS
+* Split LoginKit & CreativeKit into their own classes
+* Classes now have static references to an Instance allow calls across pages without having to pass instances around
+* The current user is now saved on an instance of LoginKit allowing access across your entire app
+* Added OIDC to the current user's data
+* Added a caller for the access token
+* Added lots of error checking in platform code and more verbose errors
+* Fixed issue where videos wouldn't send on Android
+* Removed deprecated Verify Phone Number
+
