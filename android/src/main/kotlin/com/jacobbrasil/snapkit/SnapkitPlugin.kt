@@ -3,6 +3,7 @@ package com.jacobbrasil.snapkit
 import android.app.Activity
 import android.content.pm.PackageManager
 import android.content.pm.PackageManager.PackageInfoFlags
+import android.util.Log
 import com.snap.creativekit.SnapCreative
 import com.snap.creativekit.api.SnapCreativeKitApi
 import com.snap.creativekit.api.SnapCreativeKitCompletionCallback
@@ -11,8 +12,6 @@ import com.snap.creativekit.exceptions.SnapMediaSizeException
 import com.snap.creativekit.exceptions.SnapStickerSizeException
 import com.snap.creativekit.exceptions.SnapVideoLengthException
 import com.snap.creativekit.media.SnapMediaFactory
-import com.snap.creativekit.media.SnapPhotoFile
-import com.snap.creativekit.media.SnapSticker
 import com.snap.creativekit.models.SnapContent
 import com.snap.creativekit.models.SnapLiveCameraContent
 import com.snap.creativekit.models.SnapPhotoContent
@@ -20,7 +19,6 @@ import com.snap.creativekit.models.SnapVideoContent
 import com.snap.loginkit.AccessTokenResultCallback
 import com.snap.loginkit.BitmojiQuery
 import com.snap.loginkit.LoginResultCallback
-import com.snap.loginkit.SnapLogin
 import com.snap.loginkit.SnapLoginProvider
 import com.snap.loginkit.UserDataQuery
 import com.snap.loginkit.UserDataResultCallback
@@ -95,9 +93,10 @@ class SnapkitPlugin: FlutterPlugin, MethodCallHandler, ActivityAware {
         result.success(SnapLoginProvider.get(requireActivity()).isUserLoggedIn)
       }
       "login" -> {
+        Log.d("SNAPKIT", "Pre-Login Flow: " + requireActivity())
         SnapLoginProvider.get(requireActivity()).startTokenGrant(object: LoginResultCallback {
           override fun onStart() {
-            // Nothing is done here
+            Log.d("SNAPKIT", "Login Flow Started")
           }
 
           override fun onSuccess(accessToken: String) {
@@ -270,19 +269,22 @@ class SnapkitPlugin: FlutterPlugin, MethodCallHandler, ActivityAware {
 
         if (sticker["size"] is Map<*, *>) {
           val size = sticker["size"] as Map<*, *>
-          snapSticker.setWidthDp(size["width"] as Float)
-          snapSticker.setHeightDp(size["height"] as Float)
+          snapSticker.setWidthDp((size["width"] as Double).toFloat())
+          snapSticker.setHeightDp((size["height"] as Double).toFloat())
+        } else {
+          snapSticker.setWidthDp(64f)
+          snapSticker.setHeightDp(64f)
         }
 
         if (sticker["offset"] is Map<*, *>) {
           val offset = sticker["offset"] as Map<*, *>
-          snapSticker.setPosX(offset["x"] as Float)
-          snapSticker.setPosY(offset["y"] as Float)
+          snapSticker.setPosX((offset["x"] as Double).toFloat())
+          snapSticker.setPosY((offset["y"] as Double).toFloat())
         }
 
         if (sticker["rotation"] is Map<*, *>) {
           val rotation = sticker["rotation"] as Map<*, *>
-          snapSticker.setRotationDegreesClockwise(rotation["angle"] as Float)
+          snapSticker.setRotationDegreesClockwise((rotation["angle"] as Double).toFloat())
         }
 
         content.snapSticker = snapSticker

@@ -14,7 +14,8 @@ class CreativeKitSticker {
 
   /// The size of the sticker relative to the snap.
   ///
-  /// If null, Snapchat will determine the size of the sticker.
+  /// If null, Snapchat will determine the size of the sticker on iOS but
+  /// will default to 64x64 on Android otherwise Sticker would not appear.
   final StickerSize? size;
 
   /// The offset of the sticker relative to the snap.
@@ -80,9 +81,11 @@ class CreativeKitSticker {
 
 class StickerSize {
   /// The width of the sticker relative to the snap.
+  /// Defaults to 64 on Android
   final double width;
 
   /// The height of the sticker relative to the snap.
+  /// Defaults to 64 on Android
   final double height;
 
   const StickerSize(this.width, this.height);

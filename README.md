@@ -153,49 +153,51 @@ Add the following to your `AndroidMainfest.xml` in `app/android/app/src/main` Ma
 
 ```xml
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
+	<uses-permission android:name="android.permission.INTERNET" />
+
 	<application
 		android:label="snapkit_example"
 		android:name="${applicationName}"
 		android:icon="@mipmap/ic_launcher">
 
-	<meta-data
-		android:name="com.snap.kit.clientId"
-		android:value="YOUR_CLIENT_ID_HERE" />
+	<meta-data android:name="com.snap.kit.clientId" android:value="YOUR_CLIENT_ID_HERE" />
+  <meta-data android:name="com.snap.kit.redirectUrl" android:value="YOUR_SCHEME://YOUR_HOST/YOUR_PATH" />
+  <meta-data android:name="com.snap.kit.scopes" android:resource="@array/snap_connect_scopes" />
 
-	<meta-data
-		android:name="com.snap.kit.redirectUrl"
-		android:value="YOUR_SCHEME://YOUR_HOST/YOUR_PATH" />
+	 <activity
+    android:name="com.snap.corekit.SnapKitActivity"
+    android:launchMode="singleTask"
+    android:exported="true"
+  	>
+    <intent-filter>
+      <action android:name="android.intent.action.VIEW" />
+      <category android:name="android.intent.category.DEFAULT" />
+				<category android:name="android.intent.category.BROWSABLE" />
+				<!--
+						Enter the parts of your redirect url below
+						e.g., if your redirect url is myapp://snap-kit/oauth2
+								android:scheme="myapp"
+								android:host="snap-kit"
+								android:path="oauth2"
+				!-->
+				<data
+					android:scheme="myapp"
+					android:host="snapkit"
+					android:path="/oauth2"
+					/>
+    </intent-filter>
+  </activity>
 
-	<meta-data
-		android:name="com.snap.kit.scopes"
-		android:resource="@array/snap_connect_scopes" />
-
-	<activity
-		android:name="com.snap.corekit.SnapKitActivity"
-		android:launchMode="singleTask"
-		android:exported="true">
-		<intent-filter>
-			<action android:name="android.intent.action.VIEW" />
-			<category android:name="android.intent.category.DEFAULT" />
-			<category android:name="android.intent.category.BROWSABLE" />
-			<!-- Change this to match your redirect URL -->
-			<data
-				android:scheme="YOUR_SCHEME"
-				android:host="YOUR_HOST"
-				android:path="/YOUR_PATH" />
-		</intent-filter>
-	</activity>
-
-	<!-- Add this if you want to use the Creative Kit -->
 	<provider
-		android:name="androidx.core.content.FileProvider"
-		android:authorities="${applicationId}.fileprovider"
-		android:exported="false"
-		android:grantUriPermissions="true">
-		<meta-data
-			android:name="android.support.FILE_PROVIDER_PATHS"
-			android:resource="@xml/file_paths" />
-	</provider>
+    android:authorities="${applicationId}.fileprovider"
+    android:name="androidx.core.content.FileProvider"
+    android:exported="false"
+    android:grantUriPermissions="true">
+    <meta-data
+      android:name="android.support.FILE_PROVIDER_PATHS"
+      android:resource="@xml/file_paths"
+      />
+  </provider>
 
 ...
 ```

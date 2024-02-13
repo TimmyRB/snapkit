@@ -44,6 +44,12 @@ class _MyAppState extends State<MyApp> {
 
   @override
   Widget build(BuildContext context) {
+    const sticker = CreativeKitSticker(
+      NetworkImage(
+        'https://storage.googleapis.com/cms-storage-bucket/0dbfcc7a59cd1cf16282.png',
+      ),
+    );
+
     return MaterialApp(
       home: ScaffoldMessenger(
         key: _scaffoldMessengerKey,
@@ -106,11 +112,7 @@ class _MyAppState extends State<MyApp> {
               TextButton(
                 onPressed: () {
                   CreativeKit.I.shareToCamera(
-                    sticker: const CreativeKitSticker(
-                      NetworkImage(
-                        'https://storage.googleapis.com/cms-storage-bucket/0dbfcc7a59cd1cf16282.png',
-                      ),
-                    ),
+                    sticker: sticker,
                     caption: 'SnapKit Share to Camera!',
                     link: Uri.parse('https://kit.snapchat.com'),
                   );
@@ -125,11 +127,7 @@ class _MyAppState extends State<MyApp> {
                     onPressed: () {
                       CreativeKit.I.shareWithPhoto(
                         const AssetImage('assets/images/test.png'),
-                        sticker: const CreativeKitSticker(
-                          NetworkImage(
-                            'https://storage.googleapis.com/cms-storage-bucket/0dbfcc7a59cd1cf16282.png',
-                          ),
-                        ),
+                        sticker: sticker,
                         caption: 'SnapKit Share with Photo!',
                         link: Uri.parse('https://kit.snapchat.com'),
                       );
@@ -142,11 +140,7 @@ class _MyAppState extends State<MyApp> {
                         const NetworkImage(
                           'https://img.freepik.com/free-vector/dark-gradient-background-with-copy-space_53876-99548.jpg?size=626&ext=jpg',
                         ),
-                        sticker: const CreativeKitSticker(
-                          NetworkImage(
-                            'https://storage.googleapis.com/cms-storage-bucket/0dbfcc7a59cd1cf16282.png',
-                          ),
-                        ),
+                        sticker: sticker,
                         caption: 'SnapKit Share with Photo!',
                         link: Uri.parse('https://kit.snapchat.com'),
                       );
@@ -164,11 +158,7 @@ class _MyAppState extends State<MyApp> {
                       CreativeKit.I.shareWithVideo(
                         DefaultAssetBundle.of(context)
                             .load('assets/videos/test.mov'),
-                        sticker: const CreativeKitSticker(
-                          NetworkImage(
-                            'https://storage.googleapis.com/cms-storage-bucket/0dbfcc7a59cd1cf16282.png',
-                          ),
-                        ),
+                        sticker: sticker,
                         caption: 'SnapKit Share with Video!',
                         link: Uri.parse('https://kit.snapchat.com'),
                       );
@@ -181,11 +171,7 @@ class _MyAppState extends State<MyApp> {
                         Uri.parse(
                           'https://www.dropbox.com/scl/fi/9dhitv3agfv6ffkyq6yqp/test.mp4?rlkey=mtolodijexu3yv07n5dxplv7f&dl=1',
                         ),
-                        sticker: const CreativeKitSticker(
-                          NetworkImage(
-                            'https://storage.googleapis.com/cms-storage-bucket/0dbfcc7a59cd1cf16282.png',
-                          ),
-                        ),
+                        sticker: sticker,
                         caption: 'SnapKit Share with Video!',
                         link: Uri.parse('https://kit.snapchat.com'),
                       );
